@@ -39,6 +39,7 @@ services:
     volumes:
       - ./app:/app/app
       - ./tests:/app/tests
+      - ./data:/app/data
       - ./pyproject.toml:/app/pyproject.toml
       - ./README.md:/app/README.md
       - ./requirements.txt:/app/requirements.txt

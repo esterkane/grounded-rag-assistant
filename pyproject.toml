@@ -13,6 +13,7 @@ dependencies = [
     "pydantic-settings",
     "google-genai",
     "httpx",
+    "pypdf",
 ]
 
 [project.optional-dependencies]

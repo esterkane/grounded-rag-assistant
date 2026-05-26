@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     elasticsearch_url: str = "http://localhost:9200"
-    elasticsearch_index: str = "rag_documents"
+    elasticsearch_index: str = "rag_chunks"
 
     postgres_host: str = "localhost"
     postgres_port: int = 5432

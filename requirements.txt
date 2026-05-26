@@ -7,5 +7,6 @@ pydantic
 pydantic-settings
 google-genai
 httpx
+pypdf
 pytest
 ruff

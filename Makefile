@@ -16,7 +16,7 @@ lint:
 	docker compose run --rm api ruff check .
 
 ingest:
-	docker compose run --rm api python -m app.ingestion
+	docker compose run --rm api python -m app.ingestion.run --path data/sample_corpus
 
 eval:
 	docker compose run --rm api python -m app.eval

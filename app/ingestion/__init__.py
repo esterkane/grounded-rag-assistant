@@ -1,1 +1,1 @@
-"""Ingestion package placeholder for later phases."""
+"""Document loading, chunking, embedding, and Elasticsearch indexing."""
