@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+elasticsearch
+sentence-transformers
+psycopg[binary]
+pydantic
+pydantic-settings
+google-genai
+httpx
+pytest
+ruff

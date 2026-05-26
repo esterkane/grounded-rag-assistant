@@ -1,0 +1,59 @@
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.0
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200 >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: grounded_rag
+      POSTGRES_USER: grounded_rag
+      POSTGRES_PASSWORD: grounded_rag
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grounded_rag -d grounded_rag"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    volumes:
+      - ./app:/app/app
+      - ./tests:/app/tests
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./README.md:/app/README.md
+      - ./requirements.txt:/app/requirements.txt
+    env_file:
+      - .env.example
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      POSTGRES_HOST: postgres
+    ports:
+      - "8000:8000"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+volumes:
+  es-data:
+  postgres-data:

@@ -9,7 +9,7 @@ This directory contains seed data copied before Phase 0.
   - Purpose: Phase 1 sample Elasticsearch / AI-search documentation corpus.
   - Note: copied from the processed data artifact only; raw cloned repositories were not copied because they include build and application code.
 
-## gold_eval
+## gold
 
 - `queries.jsonl`
 - `judgments.jsonl`
