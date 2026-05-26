@@ -1,0 +1,300 @@
+{"document_id":"doc-answerhub-duplicate-answers-runbook","query_id":"q-answerhub-duplicate-answers-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-answerhub-duplicate-answers-concept","query_id":"q-answerhub-duplicate-answers-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-vectorflow-duplicate-answers-runbook","query_id":"q-answerhub-duplicate-answers-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-duplicate-answers-concept","query_id":"q-answerhub-duplicate-answers-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-duplicate-answers-runbook","query_id":"q-answerhub-duplicate-answers-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-duplicate-answers-concept","query_id":"q-answerhub-duplicate-answers-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-duplicate-answers-runbook","query_id":"q-answerhub-duplicate-answers-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-duplicate-answers-concept","query_id":"q-answerhub-duplicate-answers-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-duplicate-answers-runbook","query_id":"q-answerhub-duplicate-answers-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-duplicate-answers-concept","query_id":"q-answerhub-duplicate-answers-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-permission-denied-runbook","query_id":"q-answerhub-permission-denied-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-answerhub-permission-denied-concept","query_id":"q-answerhub-permission-denied-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-vectorflow-permission-denied-runbook","query_id":"q-answerhub-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-permission-denied-concept","query_id":"q-answerhub-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-permission-denied-runbook","query_id":"q-answerhub-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-permission-denied-concept","query_id":"q-answerhub-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-permission-denied-runbook","query_id":"q-answerhub-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-permission-denied-concept","query_id":"q-answerhub-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-permission-denied-runbook","query_id":"q-answerhub-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-permission-denied-concept","query_id":"q-answerhub-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-slow-retrieval-runbook","query_id":"q-answerhub-slow-retrieval-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-answerhub-slow-retrieval-concept","query_id":"q-answerhub-slow-retrieval-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-vectorflow-slow-retrieval-runbook","query_id":"q-answerhub-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-slow-retrieval-concept","query_id":"q-answerhub-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-slow-retrieval-runbook","query_id":"q-answerhub-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-slow-retrieval-concept","query_id":"q-answerhub-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-slow-retrieval-runbook","query_id":"q-answerhub-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-slow-retrieval-concept","query_id":"q-answerhub-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-slow-retrieval-runbook","query_id":"q-answerhub-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-slow-retrieval-concept","query_id":"q-answerhub-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-sync-stall-runbook","query_id":"q-answerhub-sync-stall-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-answerhub-sync-stall-concept","query_id":"q-answerhub-sync-stall-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-vectorflow-sync-stall-runbook","query_id":"q-answerhub-sync-stall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-sync-stall-concept","query_id":"q-answerhub-sync-stall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-sync-stall-runbook","query_id":"q-answerhub-sync-stall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-sync-stall-concept","query_id":"q-answerhub-sync-stall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-sync-stall-runbook","query_id":"q-answerhub-sync-stall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-sync-stall-concept","query_id":"q-answerhub-sync-stall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-sync-stall-runbook","query_id":"q-answerhub-sync-stall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-sync-stall-concept","query_id":"q-answerhub-sync-stall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-stale-citations-runbook","query_id":"q-answerhub-stale-citations-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-answerhub-stale-citations-concept","query_id":"q-answerhub-stale-citations-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-vectorflow-stale-citations-runbook","query_id":"q-answerhub-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-stale-citations-concept","query_id":"q-answerhub-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-stale-citations-runbook","query_id":"q-answerhub-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-stale-citations-concept","query_id":"q-answerhub-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-stale-citations-runbook","query_id":"q-answerhub-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-stale-citations-concept","query_id":"q-answerhub-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-stale-citations-runbook","query_id":"q-answerhub-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-stale-citations-concept","query_id":"q-answerhub-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-missing-attachments-runbook","query_id":"q-answerhub-missing-attachments-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-answerhub-missing-attachments-concept","query_id":"q-answerhub-missing-attachments-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-vectorflow-missing-attachments-runbook","query_id":"q-answerhub-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-missing-attachments-concept","query_id":"q-answerhub-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-missing-attachments-runbook","query_id":"q-answerhub-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-missing-attachments-concept","query_id":"q-answerhub-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-missing-attachments-runbook","query_id":"q-answerhub-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-missing-attachments-concept","query_id":"q-answerhub-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-missing-attachments-runbook","query_id":"q-answerhub-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-missing-attachments-concept","query_id":"q-answerhub-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-wrong-product-runbook","query_id":"q-answerhub-wrong-product-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-answerhub-wrong-product-concept","query_id":"q-answerhub-wrong-product-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-vectorflow-wrong-product-runbook","query_id":"q-answerhub-wrong-product-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-wrong-product-concept","query_id":"q-answerhub-wrong-product-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-wrong-product-runbook","query_id":"q-answerhub-wrong-product-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-wrong-product-concept","query_id":"q-answerhub-wrong-product-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-wrong-product-runbook","query_id":"q-answerhub-wrong-product-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-wrong-product-concept","query_id":"q-answerhub-wrong-product-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-wrong-product-runbook","query_id":"q-answerhub-wrong-product-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-wrong-product-concept","query_id":"q-answerhub-wrong-product-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-low-recall-runbook","query_id":"q-answerhub-low-recall-fix","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-answerhub-low-recall-concept","query_id":"q-answerhub-low-recall-fix","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-vectorflow-low-recall-runbook","query_id":"q-answerhub-low-recall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-low-recall-concept","query_id":"q-answerhub-low-recall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-low-recall-runbook","query_id":"q-answerhub-low-recall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-low-recall-concept","query_id":"q-answerhub-low-recall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-low-recall-runbook","query_id":"q-answerhub-low-recall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-low-recall-concept","query_id":"q-answerhub-low-recall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-low-recall-runbook","query_id":"q-answerhub-low-recall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-low-recall-concept","query_id":"q-answerhub-low-recall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-noisy-escalations-runbook","query_id":"q-answerhub-noisy-escalations-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-answerhub-noisy-escalations-concept","query_id":"q-answerhub-noisy-escalations-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-vectorflow-noisy-escalations-runbook","query_id":"q-answerhub-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-noisy-escalations-concept","query_id":"q-answerhub-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-noisy-escalations-runbook","query_id":"q-answerhub-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-noisy-escalations-concept","query_id":"q-answerhub-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-noisy-escalations-runbook","query_id":"q-answerhub-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-noisy-escalations-concept","query_id":"q-answerhub-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-noisy-escalations-runbook","query_id":"q-answerhub-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-noisy-escalations-concept","query_id":"q-answerhub-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-broken-links-runbook","query_id":"q-answerhub-broken-links-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-answerhub-broken-links-concept","query_id":"q-answerhub-broken-links-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-vectorflow-broken-links-runbook","query_id":"q-answerhub-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-broken-links-concept","query_id":"q-answerhub-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-broken-links-runbook","query_id":"q-answerhub-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-broken-links-concept","query_id":"q-answerhub-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-broken-links-runbook","query_id":"q-answerhub-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-broken-links-concept","query_id":"q-answerhub-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-broken-links-runbook","query_id":"q-answerhub-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-broken-links-concept","query_id":"q-answerhub-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-duplicate-answers-runbook","query_id":"q-vectorflow-duplicate-answers-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-duplicate-answers-concept","query_id":"q-vectorflow-duplicate-answers-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-duplicate-answers-runbook","query_id":"q-vectorflow-duplicate-answers-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-vectorflow-duplicate-answers-concept","query_id":"q-vectorflow-duplicate-answers-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-catalogsync-duplicate-answers-runbook","query_id":"q-vectorflow-duplicate-answers-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-duplicate-answers-concept","query_id":"q-vectorflow-duplicate-answers-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-duplicate-answers-runbook","query_id":"q-vectorflow-duplicate-answers-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-duplicate-answers-concept","query_id":"q-vectorflow-duplicate-answers-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-duplicate-answers-runbook","query_id":"q-vectorflow-duplicate-answers-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-duplicate-answers-concept","query_id":"q-vectorflow-duplicate-answers-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-permission-denied-runbook","query_id":"q-vectorflow-permission-denied-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-permission-denied-concept","query_id":"q-vectorflow-permission-denied-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-permission-denied-runbook","query_id":"q-vectorflow-permission-denied-fix","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-vectorflow-permission-denied-concept","query_id":"q-vectorflow-permission-denied-fix","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-catalogsync-permission-denied-runbook","query_id":"q-vectorflow-permission-denied-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-permission-denied-concept","query_id":"q-vectorflow-permission-denied-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-permission-denied-runbook","query_id":"q-vectorflow-permission-denied-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-permission-denied-concept","query_id":"q-vectorflow-permission-denied-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-permission-denied-runbook","query_id":"q-vectorflow-permission-denied-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-permission-denied-concept","query_id":"q-vectorflow-permission-denied-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-slow-retrieval-runbook","query_id":"q-vectorflow-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-slow-retrieval-concept","query_id":"q-vectorflow-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-slow-retrieval-runbook","query_id":"q-vectorflow-slow-retrieval-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-vectorflow-slow-retrieval-concept","query_id":"q-vectorflow-slow-retrieval-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-catalogsync-slow-retrieval-runbook","query_id":"q-vectorflow-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-slow-retrieval-concept","query_id":"q-vectorflow-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-slow-retrieval-runbook","query_id":"q-vectorflow-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-slow-retrieval-concept","query_id":"q-vectorflow-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-slow-retrieval-runbook","query_id":"q-vectorflow-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-slow-retrieval-concept","query_id":"q-vectorflow-slow-retrieval-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-sync-stall-runbook","query_id":"q-vectorflow-sync-stall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-sync-stall-concept","query_id":"q-vectorflow-sync-stall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-sync-stall-runbook","query_id":"q-vectorflow-sync-stall-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-vectorflow-sync-stall-concept","query_id":"q-vectorflow-sync-stall-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-catalogsync-sync-stall-runbook","query_id":"q-vectorflow-sync-stall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-sync-stall-concept","query_id":"q-vectorflow-sync-stall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-sync-stall-runbook","query_id":"q-vectorflow-sync-stall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-sync-stall-concept","query_id":"q-vectorflow-sync-stall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-sync-stall-runbook","query_id":"q-vectorflow-sync-stall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-sync-stall-concept","query_id":"q-vectorflow-sync-stall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-stale-citations-runbook","query_id":"q-vectorflow-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-stale-citations-concept","query_id":"q-vectorflow-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-stale-citations-runbook","query_id":"q-vectorflow-stale-citations-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-vectorflow-stale-citations-concept","query_id":"q-vectorflow-stale-citations-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-catalogsync-stale-citations-runbook","query_id":"q-vectorflow-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-stale-citations-concept","query_id":"q-vectorflow-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-stale-citations-runbook","query_id":"q-vectorflow-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-stale-citations-concept","query_id":"q-vectorflow-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-stale-citations-runbook","query_id":"q-vectorflow-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-stale-citations-concept","query_id":"q-vectorflow-stale-citations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-missing-attachments-runbook","query_id":"q-vectorflow-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-missing-attachments-concept","query_id":"q-vectorflow-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-missing-attachments-runbook","query_id":"q-vectorflow-missing-attachments-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-vectorflow-missing-attachments-concept","query_id":"q-vectorflow-missing-attachments-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-catalogsync-missing-attachments-runbook","query_id":"q-vectorflow-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-missing-attachments-concept","query_id":"q-vectorflow-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-missing-attachments-runbook","query_id":"q-vectorflow-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-missing-attachments-concept","query_id":"q-vectorflow-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-missing-attachments-runbook","query_id":"q-vectorflow-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-missing-attachments-concept","query_id":"q-vectorflow-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-wrong-product-runbook","query_id":"q-vectorflow-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-wrong-product-concept","query_id":"q-vectorflow-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-wrong-product-runbook","query_id":"q-vectorflow-wrong-product-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-vectorflow-wrong-product-concept","query_id":"q-vectorflow-wrong-product-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-catalogsync-wrong-product-runbook","query_id":"q-vectorflow-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-wrong-product-concept","query_id":"q-vectorflow-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-wrong-product-runbook","query_id":"q-vectorflow-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-wrong-product-concept","query_id":"q-vectorflow-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-wrong-product-runbook","query_id":"q-vectorflow-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-wrong-product-concept","query_id":"q-vectorflow-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-low-recall-runbook","query_id":"q-vectorflow-low-recall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-low-recall-concept","query_id":"q-vectorflow-low-recall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-low-recall-runbook","query_id":"q-vectorflow-low-recall-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-vectorflow-low-recall-concept","query_id":"q-vectorflow-low-recall-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-catalogsync-low-recall-runbook","query_id":"q-vectorflow-low-recall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-low-recall-concept","query_id":"q-vectorflow-low-recall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-low-recall-runbook","query_id":"q-vectorflow-low-recall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-low-recall-concept","query_id":"q-vectorflow-low-recall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-low-recall-runbook","query_id":"q-vectorflow-low-recall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-low-recall-concept","query_id":"q-vectorflow-low-recall-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-noisy-escalations-runbook","query_id":"q-vectorflow-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-noisy-escalations-concept","query_id":"q-vectorflow-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-noisy-escalations-runbook","query_id":"q-vectorflow-noisy-escalations-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-vectorflow-noisy-escalations-concept","query_id":"q-vectorflow-noisy-escalations-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-catalogsync-noisy-escalations-runbook","query_id":"q-vectorflow-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-noisy-escalations-concept","query_id":"q-vectorflow-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-noisy-escalations-runbook","query_id":"q-vectorflow-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-noisy-escalations-concept","query_id":"q-vectorflow-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-noisy-escalations-runbook","query_id":"q-vectorflow-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-noisy-escalations-concept","query_id":"q-vectorflow-noisy-escalations-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-broken-links-runbook","query_id":"q-vectorflow-broken-links-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-broken-links-concept","query_id":"q-vectorflow-broken-links-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-broken-links-runbook","query_id":"q-vectorflow-broken-links-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-vectorflow-broken-links-concept","query_id":"q-vectorflow-broken-links-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-catalogsync-broken-links-runbook","query_id":"q-vectorflow-broken-links-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-broken-links-concept","query_id":"q-vectorflow-broken-links-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-broken-links-runbook","query_id":"q-vectorflow-broken-links-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-broken-links-concept","query_id":"q-vectorflow-broken-links-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-broken-links-runbook","query_id":"q-vectorflow-broken-links-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-broken-links-concept","query_id":"q-vectorflow-broken-links-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-duplicate-answers-runbook","query_id":"q-catalogsync-duplicate-answers-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-duplicate-answers-concept","query_id":"q-catalogsync-duplicate-answers-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-duplicate-answers-runbook","query_id":"q-catalogsync-duplicate-answers-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-duplicate-answers-concept","query_id":"q-catalogsync-duplicate-answers-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-duplicate-answers-runbook","query_id":"q-catalogsync-duplicate-answers-fix","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-catalogsync-duplicate-answers-concept","query_id":"q-catalogsync-duplicate-answers-fix","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-caseforge-duplicate-answers-runbook","query_id":"q-catalogsync-duplicate-answers-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-duplicate-answers-concept","query_id":"q-catalogsync-duplicate-answers-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-duplicate-answers-runbook","query_id":"q-catalogsync-duplicate-answers-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-duplicate-answers-concept","query_id":"q-catalogsync-duplicate-answers-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-permission-denied-runbook","query_id":"q-catalogsync-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-permission-denied-concept","query_id":"q-catalogsync-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-permission-denied-runbook","query_id":"q-catalogsync-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-permission-denied-concept","query_id":"q-catalogsync-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-permission-denied-runbook","query_id":"q-catalogsync-permission-denied-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-catalogsync-permission-denied-concept","query_id":"q-catalogsync-permission-denied-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-caseforge-permission-denied-runbook","query_id":"q-catalogsync-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-permission-denied-concept","query_id":"q-catalogsync-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-permission-denied-runbook","query_id":"q-catalogsync-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-permission-denied-concept","query_id":"q-catalogsync-permission-denied-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-slow-retrieval-runbook","query_id":"q-catalogsync-slow-retrieval-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-slow-retrieval-concept","query_id":"q-catalogsync-slow-retrieval-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-slow-retrieval-runbook","query_id":"q-catalogsync-slow-retrieval-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-slow-retrieval-concept","query_id":"q-catalogsync-slow-retrieval-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-slow-retrieval-runbook","query_id":"q-catalogsync-slow-retrieval-fix","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-catalogsync-slow-retrieval-concept","query_id":"q-catalogsync-slow-retrieval-fix","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-caseforge-slow-retrieval-runbook","query_id":"q-catalogsync-slow-retrieval-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-slow-retrieval-concept","query_id":"q-catalogsync-slow-retrieval-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-slow-retrieval-runbook","query_id":"q-catalogsync-slow-retrieval-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-slow-retrieval-concept","query_id":"q-catalogsync-slow-retrieval-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-sync-stall-runbook","query_id":"q-catalogsync-sync-stall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-sync-stall-concept","query_id":"q-catalogsync-sync-stall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-sync-stall-runbook","query_id":"q-catalogsync-sync-stall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-sync-stall-concept","query_id":"q-catalogsync-sync-stall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-sync-stall-runbook","query_id":"q-catalogsync-sync-stall-fix","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-catalogsync-sync-stall-concept","query_id":"q-catalogsync-sync-stall-fix","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-caseforge-sync-stall-runbook","query_id":"q-catalogsync-sync-stall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-sync-stall-concept","query_id":"q-catalogsync-sync-stall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-sync-stall-runbook","query_id":"q-catalogsync-sync-stall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-sync-stall-concept","query_id":"q-catalogsync-sync-stall-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-stale-citations-runbook","query_id":"q-catalogsync-stale-citations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-stale-citations-concept","query_id":"q-catalogsync-stale-citations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-stale-citations-runbook","query_id":"q-catalogsync-stale-citations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-stale-citations-concept","query_id":"q-catalogsync-stale-citations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-stale-citations-runbook","query_id":"q-catalogsync-stale-citations-fix","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-catalogsync-stale-citations-concept","query_id":"q-catalogsync-stale-citations-fix","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-caseforge-stale-citations-runbook","query_id":"q-catalogsync-stale-citations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-stale-citations-concept","query_id":"q-catalogsync-stale-citations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-stale-citations-runbook","query_id":"q-catalogsync-stale-citations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-stale-citations-concept","query_id":"q-catalogsync-stale-citations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-missing-attachments-runbook","query_id":"q-catalogsync-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-missing-attachments-concept","query_id":"q-catalogsync-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-missing-attachments-runbook","query_id":"q-catalogsync-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-missing-attachments-concept","query_id":"q-catalogsync-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-missing-attachments-runbook","query_id":"q-catalogsync-missing-attachments-diagnose","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-catalogsync-missing-attachments-concept","query_id":"q-catalogsync-missing-attachments-diagnose","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-caseforge-missing-attachments-runbook","query_id":"q-catalogsync-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-missing-attachments-concept","query_id":"q-catalogsync-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-missing-attachments-runbook","query_id":"q-catalogsync-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-missing-attachments-concept","query_id":"q-catalogsync-missing-attachments-diagnose","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-wrong-product-runbook","query_id":"q-catalogsync-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-wrong-product-concept","query_id":"q-catalogsync-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-wrong-product-runbook","query_id":"q-catalogsync-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-wrong-product-concept","query_id":"q-catalogsync-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-wrong-product-runbook","query_id":"q-catalogsync-wrong-product-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-catalogsync-wrong-product-concept","query_id":"q-catalogsync-wrong-product-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-caseforge-wrong-product-runbook","query_id":"q-catalogsync-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-wrong-product-concept","query_id":"q-catalogsync-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-wrong-product-runbook","query_id":"q-catalogsync-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-wrong-product-concept","query_id":"q-catalogsync-wrong-product-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-low-recall-runbook","query_id":"q-catalogsync-low-recall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-low-recall-concept","query_id":"q-catalogsync-low-recall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-low-recall-runbook","query_id":"q-catalogsync-low-recall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-low-recall-concept","query_id":"q-catalogsync-low-recall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-low-recall-runbook","query_id":"q-catalogsync-low-recall-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-catalogsync-low-recall-concept","query_id":"q-catalogsync-low-recall-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-caseforge-low-recall-runbook","query_id":"q-catalogsync-low-recall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-low-recall-concept","query_id":"q-catalogsync-low-recall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-low-recall-runbook","query_id":"q-catalogsync-low-recall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-low-recall-concept","query_id":"q-catalogsync-low-recall-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-noisy-escalations-runbook","query_id":"q-catalogsync-noisy-escalations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-noisy-escalations-concept","query_id":"q-catalogsync-noisy-escalations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-noisy-escalations-runbook","query_id":"q-catalogsync-noisy-escalations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-noisy-escalations-concept","query_id":"q-catalogsync-noisy-escalations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-noisy-escalations-runbook","query_id":"q-catalogsync-noisy-escalations-fix","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-catalogsync-noisy-escalations-concept","query_id":"q-catalogsync-noisy-escalations-fix","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-caseforge-noisy-escalations-runbook","query_id":"q-catalogsync-noisy-escalations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-noisy-escalations-concept","query_id":"q-catalogsync-noisy-escalations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-noisy-escalations-runbook","query_id":"q-catalogsync-noisy-escalations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-noisy-escalations-concept","query_id":"q-catalogsync-noisy-escalations-fix","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-broken-links-runbook","query_id":"q-catalogsync-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-answerhub-broken-links-concept","query_id":"q-catalogsync-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-broken-links-runbook","query_id":"q-catalogsync-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-vectorflow-broken-links-concept","query_id":"q-catalogsync-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-catalogsync-broken-links-runbook","query_id":"q-catalogsync-broken-links-explain","rationale":"Exact product and issue match.","relevance":3}
+{"document_id":"doc-catalogsync-broken-links-concept","query_id":"q-catalogsync-broken-links-explain","rationale":"Exact product and issue match.","relevance":2}
+{"document_id":"doc-caseforge-broken-links-runbook","query_id":"q-catalogsync-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-caseforge-broken-links-concept","query_id":"q-catalogsync-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-broken-links-runbook","query_id":"q-catalogsync-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
+{"document_id":"doc-signaldesk-broken-links-concept","query_id":"q-catalogsync-broken-links-explain","rationale":"Same issue pattern but different product.","relevance":1}
