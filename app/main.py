@@ -10,6 +10,7 @@ from __future__ import annotations
 from fastapi import FastAPI, Response
 from pydantic import BaseModel
 
+from app.api.search import router as search_router
 from app.config import settings
 
 app = FastAPI(
@@ -17,6 +18,8 @@ app = FastAPI(
     version="0.1.0",
     description="Grounded RAG assistant over Elasticsearch and AI-search docs.",
 )
+
+app.include_router(search_router)
 
 
 class DependencyHealth(BaseModel):
