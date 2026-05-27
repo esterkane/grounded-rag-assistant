@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+secrets/
+
+# Eval output (Phase 4)
+eval_reports/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Model caches
+.cache/
+
+# Reproducible, fetched at Phase 1 via `make corpus` (see docs/CORPUS.md)
+data/sample_corpus/
+
+# Local setup-update backups
+.backup/
+*.bak
