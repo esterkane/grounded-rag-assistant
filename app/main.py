@@ -10,6 +10,7 @@ from __future__ import annotations
 from fastapi import FastAPI, Response
 from pydantic import BaseModel
 
+from app.api.ask import router as ask_router
 from app.api.search import router as search_router
 from app.config import settings
 
@@ -20,6 +21,7 @@ app = FastAPI(
 )
 
 app.include_router(search_router)
+app.include_router(ask_router)
 
 
 class DependencyHealth(BaseModel):
