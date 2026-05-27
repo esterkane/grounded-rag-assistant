@@ -13,6 +13,7 @@ dependencies = [
     # Match the Elasticsearch 9.4.1 server. A major-version mismatch is unsupported.
     "elasticsearch>=9,<10",
     "sentence-transformers>=2.7",
+    "pypdf>=4.2",
     "psycopg[binary]>=3.1",
     "pydantic>=2.6",
     "pydantic-settings>=2.2",

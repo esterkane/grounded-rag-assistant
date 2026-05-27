@@ -28,6 +28,7 @@ eval_reports/
 
 # Model caches
 .cache/
+.hf_cache/
 
 # Reproducible, fetched at Phase 1 via `make corpus` (see docs/CORPUS.md)
 data/sample_corpus/

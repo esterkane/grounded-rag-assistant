@@ -2,12 +2,12 @@
 # Infra is pinned (see docs/INFRA.md). Never add `-v` to up/down: it would wipe
 # the Elasticsearch and Postgres volumes. Use a separate, explicit reset target.
 
-PYTHON ?= python
+PYTHON ?= python3
 COMPOSE ?= docker compose
 
 .DEFAULT_GOAL := help
 
-.PHONY: help up down logs test lint ingest eval
+.PHONY: help up down logs test lint corpus ingest eval
 
 help: ## List available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -27,6 +27,9 @@ test: ## Run the test suite
 
 lint: ## Lint with ruff
 	ruff check .
+
+corpus: ## Fetch the sample corpus from Elastic GitHub repos (runs before ingest)
+	$(PYTHON) -m app.ingestion.fetch_corpus --out data/sample_corpus
 
 ingest: ## Ingest the sample corpus into Elasticsearch (Phase 1)
 	$(PYTHON) -m app.ingestion.run --path data/sample_corpus
