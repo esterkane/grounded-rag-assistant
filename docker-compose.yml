@@ -48,6 +48,9 @@ services:
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       POSTGRES_HOST: postgres
+      # Injected from the gitignored .env (not committed). Overrides the empty
+      # value in .env.example so the gemini provider works locally.
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
     ports:
       - "8000:8000"
     depends_on:
