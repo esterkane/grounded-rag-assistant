@@ -1,4 +1,4 @@
-.PHONY: up down logs test lint migrate ingest eval
+.PHONY: up down logs test lint migrate ingest eval demo
 
 up:
 	docker compose up -d --build
@@ -23,3 +23,8 @@ ingest:
 
 eval:
 	docker compose run --rm api python -m app.eval
+
+demo:
+	docker compose up -d --build
+	docker compose run --rm api python -m app.ingestion.run --path data/sample_corpus
+	docker compose run --rm -e API_URL=http://api:8000 api python -m app.demo

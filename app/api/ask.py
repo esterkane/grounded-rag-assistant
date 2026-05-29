@@ -19,6 +19,7 @@ from app.db.repository import insert_query_log
 from app.generation.answerer import answer_question
 from app.generation.models import GroundedAnswer
 from app.generation.providers.base import LLMProvider
+from app.observability.cost import estimate_cost
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +80,8 @@ def _record_query_log(
     """
     flagged = answer.insufficient or bool(answer.dropped_citations)
     retrieval_mode = "hybrid+rerank" if rerank else "hybrid"
+    usage = answer.usage
+    cost = estimate_cost(answer.model, usage)
     try:
         with connect(settings) as conn:
             insert_query_log(
@@ -91,6 +94,10 @@ def _record_query_log(
                 provider=settings.llm_provider,
                 retrieval_mode=retrieval_mode,
                 payload=answer.model_dump(),
+                model=answer.model,
+                input_tokens=usage.input_tokens if usage else 0,
+                output_tokens=usage.output_tokens if usage else 0,
+                estimated_cost_usd=cost,
             )
             conn.commit()
     except Exception:

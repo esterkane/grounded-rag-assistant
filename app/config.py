@@ -12,6 +12,16 @@ class Settings(BaseSettings):
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     log_level: str = "INFO"
+    # Structured logging: "json" (one JSON object per line, with trace ids) or
+    # "text" (plain human-readable lines).
+    log_format: str = "json"
+
+    # Observability (Phase 6)
+    otel_service_name: str = "grounded-rag-assistant"
+    otel_traces_enabled: bool = True
+    # Empty -> spans go to the console exporter. Set to an OTLP/HTTP endpoint
+    # (e.g. http://jaeger:4318) to export there instead.
+    otel_exporter_otlp_endpoint: str = ""
 
     elasticsearch_url: str = "http://localhost:9200"
     elasticsearch_index: str = "rag_chunks"

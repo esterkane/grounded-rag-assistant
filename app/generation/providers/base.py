@@ -1,9 +1,21 @@
 """Base LLM provider interface."""
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+
+from app.generation.models import TokenUsage
 
 # A chat message: {"role": "system" | "user" | "assistant", "content": str}.
 Message = dict[str, str]
+
+
+@dataclass
+class GenerationResult:
+    """A generation plus the token usage and model that produced it."""
+
+    text: str
+    usage: TokenUsage = field(default_factory=TokenUsage)
+    model: str = ""
 
 
 class LLMProvider(ABC):
@@ -24,3 +36,22 @@ class LLMProvider(ABC):
         **opts: object,
     ) -> str:
         """Generate a completion for ``messages`` and return the raw text."""
+
+    def generate_with_usage(
+        self,
+        messages: list[Message],
+        *,
+        temperature: float = 0.0,
+        json_output: bool = True,
+        **opts: object,
+    ) -> GenerationResult:
+        """Generate and report token usage.
+
+        The default delegates to :meth:`generate` and reports empty usage, so
+        providers (and test fakes) that only implement ``generate`` keep working.
+        Concrete providers override this to surface real token counts.
+        """
+        text = self.generate(
+            messages, temperature=temperature, json_output=json_output, **opts
+        )
+        return GenerationResult(text=text, usage=TokenUsage(), model="")

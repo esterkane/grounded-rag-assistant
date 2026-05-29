@@ -1,6 +1,7 @@
 """Gemini provider (google-genai, free-tier gemini-2.0-flash)."""
 
-from app.generation.providers.base import LLMProvider, Message
+from app.generation.models import TokenUsage
+from app.generation.providers.base import GenerationResult, LLMProvider, Message
 
 
 class GeminiProvider(LLMProvider):
@@ -24,6 +25,18 @@ class GeminiProvider(LLMProvider):
         json_output: bool = True,
         **opts: object,
     ) -> str:
+        return self.generate_with_usage(
+            messages, temperature=temperature, json_output=json_output, **opts
+        ).text
+
+    def generate_with_usage(
+        self,
+        messages: list[Message],
+        *,
+        temperature: float = 0.0,
+        json_output: bool = True,
+        **opts: object,
+    ) -> GenerationResult:
         from google.genai import types
 
         system = "\n\n".join(m["content"] for m in messages if m["role"] == "system")
@@ -39,4 +52,11 @@ class GeminiProvider(LLMProvider):
             contents=contents,
             config=config,
         )
-        return response.text or ""
+        usage = TokenUsage()
+        meta = getattr(response, "usage_metadata", None)
+        if meta is not None:
+            usage = TokenUsage(
+                input_tokens=getattr(meta, "prompt_token_count", 0) or 0,
+                output_tokens=getattr(meta, "candidates_token_count", 0) or 0,
+            )
+        return GenerationResult(text=response.text or "", usage=usage, model=self.model)

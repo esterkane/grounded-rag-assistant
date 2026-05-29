@@ -2,7 +2,8 @@
 
 import httpx
 
-from app.generation.providers.base import LLMProvider, Message
+from app.generation.models import TokenUsage
+from app.generation.providers.base import GenerationResult, LLMProvider, Message
 
 
 class OllamaProvider(LLMProvider):
@@ -24,6 +25,18 @@ class OllamaProvider(LLMProvider):
         json_output: bool = True,
         **opts: object,
     ) -> str:
+        return self.generate_with_usage(
+            messages, temperature=temperature, json_output=json_output, **opts
+        ).text
+
+    def generate_with_usage(
+        self,
+        messages: list[Message],
+        *,
+        temperature: float = 0.0,
+        json_output: bool = True,
+        **opts: object,
+    ) -> GenerationResult:
         payload: dict[str, object] = {
             "model": self.model,
             "messages": messages,
@@ -39,4 +52,11 @@ class OllamaProvider(LLMProvider):
             timeout=self.timeout,
         )
         response.raise_for_status()
-        return response.json()["message"]["content"]
+        body = response.json()
+        usage = TokenUsage(
+            input_tokens=body.get("prompt_eval_count", 0) or 0,
+            output_tokens=body.get("eval_count", 0) or 0,
+        )
+        return GenerationResult(
+            text=body["message"]["content"], usage=usage, model=self.model
+        )

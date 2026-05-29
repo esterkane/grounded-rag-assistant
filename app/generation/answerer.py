@@ -20,15 +20,17 @@ a hallucination can never slip through as a grounded answer.
 import json
 import logging
 
+from opentelemetry import trace
 from pydantic import BaseModel, Field, ValidationError
 
-from app.generation.models import Claim, GroundedAnswer, Source
+from app.generation.models import Claim, GroundedAnswer, Source, TokenUsage
 from app.generation.providers.base import LLMProvider, Message
 from app.retrieval.models import RetrievedChunk
 from app.retrieval.reranker import CrossEncoderReranker
 from app.retrieval.retriever import DEFAULT_K, hybrid_search
 
 logger = logging.getLogger(__name__)
+tracer = trace.get_tracer(__name__)
 
 INSUFFICIENT_MESSAGE = (
     "I don't have enough grounded evidence in the retrieved documentation to "
@@ -118,6 +120,8 @@ def _insufficient(
     answer: str = INSUFFICIENT_MESSAGE,
     *,
     dropped: list[str] | None = None,
+    model: str = "",
+    usage: TokenUsage | None = None,
 ) -> GroundedAnswer:
     return GroundedAnswer(
         query=query,
@@ -127,11 +131,18 @@ def _insufficient(
         claims=[],
         sources=[],
         dropped_citations=dropped or [],
+        model=model,
+        usage=usage,
     )
 
 
 def _build_answer(
-    query: str, raw: _RawAnswer, chunks: list[RetrievedChunk]
+    query: str,
+    raw: _RawAnswer,
+    chunks: list[RetrievedChunk],
+    *,
+    model: str = "",
+    usage: TokenUsage | None = None,
 ) -> GroundedAnswer:
     """Validate citations against context and assemble the GroundedAnswer."""
     by_id = {chunk.chunk_id: chunk for chunk in chunks}
@@ -151,7 +162,9 @@ def _build_answer(
     # trusted, so fall back to the insufficient-evidence path.
     if not raw.answered or not cited_ids:
         answer_text = raw.answer if not raw.answered and raw.answer else INSUFFICIENT_MESSAGE
-        return _insufficient(query, answer_text, dropped=dropped)
+        return _insufficient(
+            query, answer_text, dropped=dropped, model=model, usage=usage
+        )
 
     sources = [
         Source(
@@ -169,6 +182,8 @@ def _build_answer(
         claims=claims,
         sources=sources,
         dropped_citations=dropped,
+        model=model,
+        usage=usage,
     )
 
 
@@ -183,24 +198,43 @@ def generate_grounded_answer(
     if not chunks:
         return _insufficient(query)
 
-    messages = build_messages(query, chunks)
-    raw: _RawAnswer | None = None
-    for attempt in range(max_retries + 1):
-        try:
-            text = provider.generate(messages)
-        except Exception:
-            logger.exception("LLM generation failed on attempt %d", attempt + 1)
-            text = ""
-        raw = _parse_raw_answer(text)
-        if raw is not None:
-            break
-        logger.warning("Could not parse model output (attempt %d/%d)", attempt + 1, max_retries + 1)
+    with tracer.start_as_current_span("generation.generate") as span:
+        span.set_attribute("generation.context_chunks", len(chunks))
+        messages = build_messages(query, chunks)
+        raw: _RawAnswer | None = None
+        usage = TokenUsage()
+        model = ""
+        for attempt in range(max_retries + 1):
+            try:
+                result = provider.generate_with_usage(messages)
+                text = result.text
+                usage = usage + result.usage
+                model = result.model or model
+            except Exception:
+                logger.exception("LLM generation failed on attempt %d", attempt + 1)
+                text = ""
+            raw = _parse_raw_answer(text)
+            if raw is not None:
+                break
+            logger.warning(
+                "Could not parse model output (attempt %d/%d)",
+                attempt + 1,
+                max_retries + 1,
+            )
 
-    if raw is None:
-        # Parsing failed after retry: never guess — return insufficient.
-        return _insufficient(query)
+        span.set_attribute("generation.model", model)
+        span.set_attribute("generation.input_tokens", usage.input_tokens)
+        span.set_attribute("generation.output_tokens", usage.output_tokens)
 
-    return _build_answer(query, raw, chunks)
+        if raw is None:
+            # Parsing failed after retry: never guess — return insufficient (but
+            # the tokens spent on the failed attempts are still reported).
+            span.set_attribute("generation.answered", False)
+            return _insufficient(query, model=model, usage=usage)
+
+        answer = _build_answer(query, raw, chunks, model=model, usage=usage)
+        span.set_attribute("generation.answered", answer.answered)
+        return answer
 
 
 def answer_question(
@@ -219,20 +253,24 @@ def answer_question(
     rerank_candidate_pool: int = 50,
 ) -> GroundedAnswer:
     """Run Phase-2 retrieval then generate a grounded answer."""
-    pool = max(k, rerank_candidate_pool) if rerank else k
-    chunks = hybrid_search(
-        client,
-        embedder,
-        query,
-        pool,
-        index=index,
-        caller_roles=caller_roles,
-        rank_constant=rank_constant,
-        rank_window=rank_window,
-    )
-    if rerank and reranker is not None:
-        chunks = reranker.rerank(query, chunks, top_k=k)
-    else:
-        chunks = chunks[:k]
+    with tracer.start_as_current_span("generation.answer_question") as span:
+        span.set_attribute("generation.k", k)
+        span.set_attribute("generation.rerank", rerank)
+        pool = max(k, rerank_candidate_pool) if rerank else k
+        chunks = hybrid_search(
+            client,
+            embedder,
+            query,
+            pool,
+            index=index,
+            caller_roles=caller_roles,
+            rank_constant=rank_constant,
+            rank_window=rank_window,
+        )
+        if rerank and reranker is not None:
+            chunks = reranker.rerank(query, chunks, top_k=k)
+        else:
+            chunks = chunks[:k]
 
-    return generate_grounded_answer(query, chunks, provider)
+        span.set_attribute("generation.retrieved_chunks", len(chunks))
+        return generate_grounded_answer(query, chunks, provider)

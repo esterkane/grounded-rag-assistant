@@ -21,10 +21,12 @@ import logging
 from typing import Any, Protocol
 
 from elasticsearch import ApiError, Elasticsearch, TransportError
+from opentelemetry import trace
 
 from app.retrieval.models import RetrievedChunk
 
 logger = logging.getLogger(__name__)
+tracer = trace.get_tracer(__name__)
 
 DEFAULT_K = 10
 DEFAULT_RANK_CONSTANT = 60
@@ -91,21 +93,26 @@ def bm25_search(
     caller_roles: list[str] | None = None,
 ) -> list[RetrievedChunk]:
     """Lexical BM25 search over ``content`` and ``title``."""
-    body: dict[str, Any] = {
-        "bool": {
-            "must": [
-                {
-                    "multi_match": {
-                        "query": query,
-                        "fields": ["content", "title^1.5"],
+    with tracer.start_as_current_span("retrieval.bm25_search") as span:
+        span.set_attribute("retrieval.k", k)
+        span.set_attribute("retrieval.index", index)
+        body: dict[str, Any] = {
+            "bool": {
+                "must": [
+                    {
+                        "multi_match": {
+                            "query": query,
+                            "fields": ["content", "title^1.5"],
+                        }
                     }
-                }
-            ],
-            "filter": [build_permissions_filter(caller_roles)],
+                ],
+                "filter": [build_permissions_filter(caller_roles)],
+            }
         }
-    }
-    response = client.search(index=index, query=body, size=k)
-    return [_hit_to_chunk(hit, ["bm25"]) for hit in response["hits"]["hits"]]
+        response = client.search(index=index, query=body, size=k)
+        results = [_hit_to_chunk(hit, ["bm25"]) for hit in response["hits"]["hits"]]
+        span.set_attribute("retrieval.result_count", len(results))
+        return results
 
 
 def vector_search(
@@ -119,16 +126,21 @@ def vector_search(
     num_candidates: int | None = None,
 ) -> list[RetrievedChunk]:
     """Semantic kNN search over the dense ``embedding`` field."""
-    query_vector = embedder.embed([query])[0]
-    knn = {
-        "field": VECTOR_FIELD,
-        "query_vector": query_vector,
-        "k": k,
-        "num_candidates": num_candidates or max(k * 10, 100),
-        "filter": build_permissions_filter(caller_roles),
-    }
-    response = client.search(index=index, knn=knn, size=k)
-    return [_hit_to_chunk(hit, ["vector"]) for hit in response["hits"]["hits"]]
+    with tracer.start_as_current_span("retrieval.vector_search") as span:
+        span.set_attribute("retrieval.k", k)
+        span.set_attribute("retrieval.index", index)
+        query_vector = embedder.embed([query])[0]
+        knn = {
+            "field": VECTOR_FIELD,
+            "query_vector": query_vector,
+            "k": k,
+            "num_candidates": num_candidates or max(k * 10, 100),
+            "filter": build_permissions_filter(caller_roles),
+        }
+        response = client.search(index=index, knn=knn, size=k)
+        results = [_hit_to_chunk(hit, ["vector"]) for hit in response["hits"]["hits"]]
+        span.set_attribute("retrieval.result_count", len(results))
+        return results
 
 
 def reciprocal_rank_fusion(
@@ -255,49 +267,56 @@ def hybrid_search(
     back to running BM25 and vector searches separately and fusing them in
     Python. Support is auto-detected and cached.
     """
-    query_vector = embedder.embed([query])[0]
-    window = max(rank_window, k)
+    with tracer.start_as_current_span("retrieval.hybrid_search") as span:
+        span.set_attribute("retrieval.k", k)
+        span.set_attribute("retrieval.index", index)
+        query_vector = embedder.embed([query])[0]
+        window = max(rank_window, k)
 
-    if _supports_native_rrf(client):
-        try:
-            results = _native_rrf_search(
-                client,
-                query,
-                query_vector,
-                k,
-                index=index,
-                caller_roles=caller_roles,
-                rank_constant=rank_constant,
-                rank_window=window,
-            )
-            _record_native_rrf_support(client, True)
-            return results
-        except (ApiError, TransportError) as exc:
-            logger.warning(
-                "Native RRF retriever unavailable (%s); falling back to Python RRF.",
-                getattr(exc, "message", exc),
-            )
-            _record_native_rrf_support(client, False)
+        if _supports_native_rrf(client):
+            try:
+                results = _native_rrf_search(
+                    client,
+                    query,
+                    query_vector,
+                    k,
+                    index=index,
+                    caller_roles=caller_roles,
+                    rank_constant=rank_constant,
+                    rank_window=window,
+                )
+                _record_native_rrf_support(client, True)
+                span.set_attribute("retrieval.rrf_native", True)
+                span.set_attribute("retrieval.result_count", len(results))
+                return results
+            except (ApiError, TransportError) as exc:
+                logger.warning(
+                    "Native RRF retriever unavailable (%s); falling back to Python RRF.",
+                    getattr(exc, "message", exc),
+                )
+                _record_native_rrf_support(client, False)
 
-    # Python fallback: fetch each method's window then fuse.
-    bm25_hits = bm25_search(client, query, window, index=index, caller_roles=caller_roles)
-    knn = {
-        "field": VECTOR_FIELD,
-        "query_vector": query_vector,
-        "k": window,
-        "num_candidates": max(window * 2, 100),
-        "filter": build_permissions_filter(caller_roles),
-    }
-    response = client.search(index=index, knn=knn, size=window)
-    vector_hits = [_hit_to_chunk(hit, ["vector"]) for hit in response["hits"]["hits"]]
+        span.set_attribute("retrieval.rrf_native", False)
+        # Python fallback: fetch each method's window then fuse.
+        bm25_hits = bm25_search(client, query, window, index=index, caller_roles=caller_roles)
+        knn = {
+            "field": VECTOR_FIELD,
+            "query_vector": query_vector,
+            "k": window,
+            "num_candidates": max(window * 2, 100),
+            "filter": build_permissions_filter(caller_roles),
+        }
+        response = client.search(index=index, knn=knn, size=window)
+        vector_hits = [_hit_to_chunk(hit, ["vector"]) for hit in response["hits"]["hits"]]
 
-    fused = reciprocal_rank_fusion(
-        [bm25_hits, vector_hits], k, rank_constant=rank_constant
-    )
-    # Tag fused results as hybrid while preserving the contributing methods.
-    return [
-        chunk.model_copy(
-            update={"methods": ["hybrid", *[m for m in chunk.methods if m != "hybrid"]]}
+        fused = reciprocal_rank_fusion(
+            [bm25_hits, vector_hits], k, rank_constant=rank_constant
         )
-        for chunk in fused
-    ]
+        span.set_attribute("retrieval.result_count", len(fused))
+        # Tag fused results as hybrid while preserving the contributing methods.
+        return [
+            chunk.model_copy(
+                update={"methods": ["hybrid", *[m for m in chunk.methods if m != "hybrid"]]}
+            )
+            for chunk in fused
+        ]

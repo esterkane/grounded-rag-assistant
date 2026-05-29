@@ -38,3 +38,24 @@ class QueryLogDetail(QueryLogSummary):
     answer: str = ""
     payload: dict = Field(default_factory=dict)
     feedback: list[FeedbackRow] = Field(default_factory=list)
+
+
+class MetricsSummary(BaseModel):
+    """Aggregate operational metrics computed over query_log (for /metrics)."""
+
+    total_queries: int = 0
+    answered: int = 0
+    flagged: int = 0
+    insufficient: int = 0
+
+    total_input_tokens: int = 0
+    total_output_tokens: int = 0
+    total_tokens: int = 0
+    avg_total_tokens: float = 0.0
+
+    total_estimated_cost_usd: float = 0.0
+    avg_estimated_cost_usd: float = 0.0
+
+    latency_p50_ms: float = 0.0
+    latency_p95_ms: float = 0.0
+    avg_latency_ms: float = 0.0

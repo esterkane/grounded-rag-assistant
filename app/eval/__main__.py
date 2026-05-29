@@ -27,6 +27,10 @@ def main() -> None:
     args = parser.parse_args()
 
     settings = get_settings()
+
+    from app.observability import configure_logging
+
+    configure_logging(settings)
     gold = load_gold(settings.eval_gold_path)
     client = Elasticsearch(settings.elasticsearch_url, request_timeout=60)
     embedder = SentenceTransformersEmbedder(settings.embedding_model)

@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:9.4.1
+        env:
+          discovery.type: single-node
+          xpack.security.enabled: "false"
+          xpack.security.http.ssl.enabled: "false"
+          ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd "curl -fsS http://localhost:9200/_cluster/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 30
+
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: grounded_rag
+          POSTGRES_USER: grounded_rag
+          POSTGRES_PASSWORD: grounded_rag
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U grounded_rag -d grounded_rag"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      # Point the client libraries at the service containers (mapped to localhost).
+      ELASTICSEARCH_URL: http://localhost:9200
+      ELASTICSEARCH_INDEX: rag_chunks
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: grounded_rag
+      POSTGRES_USER: grounded_rag
+      POSTGRES_PASSWORD: grounded_rag
+      # No LLM key in CI: eval runs retrieval-only; integration tests use fakes.
+      LLM_PROVIDER: ollama
+      LOG_FORMAT: text
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Ingest sample corpus
+        run: python -m app.ingestion.run --path data/sample_corpus
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Run evaluation (retrieval metrics + regression guard)
+        run: python -m app.eval --no-answers
+
+      - name: Upload eval report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: eval_reports/
+          if-no-files-found: ignore
