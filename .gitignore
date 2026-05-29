@@ -15,4 +15,5 @@ build/
 .backup/
 *.bak
 data/sample_corpus/
+eval_reports/
 mcp/project-context/node_modules/

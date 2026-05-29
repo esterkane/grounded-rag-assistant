@@ -32,6 +32,17 @@ class Settings(BaseSettings):
     rerank_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     rerank_candidate_pool: int = 50
 
+    # Evaluation harness
+    eval_k: int = 10
+    eval_gold_path: str = "data/gold/queries.jsonl"
+    eval_report_dir: str = "eval_reports"
+    # Regression threshold: hybrid MRR must stay at or above this. Set from the
+    # current baseline; lower it only after investigating a real regression.
+    eval_hybrid_mrr_threshold: float = 0.9
+    # Cap on how many answerable/non-answerable gold items hit the (slow) LLM
+    # during answer-quality eval. 0 disables answer eval entirely.
+    eval_answer_sample: int = 6
+
     llm_provider: str = "gemini"
     gemini_model: str = "gemini-2.0-flash"
     gemini_api_key: str = Field(default="", repr=False)
