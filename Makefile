@@ -1,10 +1,13 @@
-.PHONY: up down logs test lint ingest eval
+.PHONY: up down logs test lint migrate ingest eval
 
 up:
 	docker compose up -d --build
 
 down:
 	docker compose down
+
+migrate:
+	docker compose run --rm api python -m app.db.migrate
 
 logs:
 	docker compose logs -f

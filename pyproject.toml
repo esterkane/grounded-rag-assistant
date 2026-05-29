@@ -11,6 +11,8 @@ dependencies = [
     "psycopg[binary]",
     "pydantic",
     "pydantic-settings",
+    "jinja2",
+    "python-multipart",
     "google-genai",
     "httpx",
     "pypdf",

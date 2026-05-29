@@ -2,16 +2,20 @@
 
 Thin HTTP adapter over :func:`app.generation.answerer.answer_question`. All
 retrieval and generation logic lives in the core packages; this layer only
-validates input and adapts the result to HTTP.
+validates input, adapts the result to HTTP, and records the call in ``query_log``
+for the Phase-5 review UI.
 """
 
 import logging
+import time
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
 from app.api.dependencies import get_embedder, get_es_client, get_provider, get_reranker
-from app.config import get_settings
+from app.config import Settings, get_settings
+from app.db.connection import connect
+from app.db.repository import insert_query_log
 from app.generation.answerer import answer_question
 from app.generation.models import GroundedAnswer
 from app.generation.providers.base import LLMProvider
@@ -36,8 +40,9 @@ def ask(
     settings = get_settings()
     rerank = settings.rerank_enabled if request.rerank is None else request.rerank
 
+    started = time.perf_counter()
     try:
-        return answer_question(
+        answer = answer_question(
             request.query,
             client=get_es_client(),
             embedder=get_embedder(),
@@ -57,3 +62,36 @@ def ask(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="answer backend unavailable",
         ) from None
+
+    latency_ms = int((time.perf_counter() - started) * 1000)
+    _record_query_log(settings, answer, latency_ms=latency_ms, rerank=rerank)
+    return answer
+
+
+def _record_query_log(
+    settings: Settings, answer: GroundedAnswer, *, latency_ms: int, rerank: bool
+) -> None:
+    """Persist the answered call to ``query_log`` (best-effort).
+
+    Flag insufficient or low-confidence answers (a "yes" answer that still had to
+    drop citations) so the review queue can isolate them. Logging failures must
+    never fail an otherwise-successful answer, so DB errors are swallowed here.
+    """
+    flagged = answer.insufficient or bool(answer.dropped_citations)
+    retrieval_mode = "hybrid+rerank" if rerank else "hybrid"
+    try:
+        with connect(settings) as conn:
+            insert_query_log(
+                conn,
+                query=answer.query,
+                answer=answer.answer,
+                answered=answer.answered,
+                flagged=flagged,
+                latency_ms=latency_ms,
+                provider=settings.llm_provider,
+                retrieval_mode=retrieval_mode,
+                payload=answer.model_dump(),
+            )
+            conn.commit()
+    except Exception:
+        logger.exception("Failed to write query_log for query=%r", answer.query)
