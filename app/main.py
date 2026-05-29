@@ -5,12 +5,15 @@ from elasticsearch import Elasticsearch
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 
+from app.api.search import router as search_router
 from app.config import Settings, get_settings
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     app_settings = settings or get_settings()
     app = FastAPI(title=app_settings.app_name)
+
+    app.include_router(search_router)
 
     @app.get("/health")
     def health() -> JSONResponse:

@@ -24,6 +24,14 @@ class Settings(BaseSettings):
 
     embedding_model: str = "BAAI/bge-small-en-v1.5"
 
+    # Retrieval / reranking
+    retrieval_k: int = 10
+    rrf_rank_constant: int = 60
+    rrf_rank_window: int = 50
+    rerank_enabled: bool = False
+    rerank_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    rerank_candidate_pool: int = 50
+
     llm_provider: str = "gemini"
     gemini_model: str = "gemini-2.0-flash"
     gemini_api_key: str = Field(default="", repr=False)
