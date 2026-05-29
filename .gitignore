@@ -11,3 +11,8 @@ dist/
 build/
 *.egg-info/
 .DS_Store
+.restore-backups/
+.backup/
+*.bak
+data/sample_corpus/
+mcp/project-context/node_modules/
