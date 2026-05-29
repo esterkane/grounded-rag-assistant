@@ -11,6 +11,7 @@ from functools import lru_cache
 from elasticsearch import Elasticsearch
 
 from app.config import Settings, get_settings
+from app.generation.providers import LLMProvider, build_provider
 from app.ingestion.embedder import SentenceTransformersEmbedder
 from app.retrieval.reranker import CrossEncoderReranker
 
@@ -31,3 +32,8 @@ def get_embedder() -> SentenceTransformersEmbedder:
 def get_reranker() -> CrossEncoderReranker:
     settings: Settings = get_settings()
     return CrossEncoderReranker(settings.rerank_model)
+
+
+@lru_cache
+def get_provider() -> LLMProvider:
+    return build_provider(get_settings())
