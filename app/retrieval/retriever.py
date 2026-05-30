@@ -185,18 +185,24 @@ def reciprocal_rank_fusion(
 
 def _supports_native_rrf(client: Elasticsearch) -> bool:
     """Probe (and cache) whether the cluster's RRF retriever API is usable."""
-    try:
-        cluster_name = client.info().get("cluster_name", "default")
-    except (ApiError, TransportError):  # pragma: no cover - network failure
-        return False
+    cluster_name = getattr(client, "_grounded_rag_cluster_name", None)
+    if cluster_name is None:
+        try:
+            cluster_name = client.info().get("cluster_name", "default")
+        except (ApiError, TransportError):  # pragma: no cover - network failure
+            return False
+        setattr(client, "_grounded_rag_cluster_name", cluster_name)
     return _native_rrf_support.get(cluster_name, True)
 
 
 def _record_native_rrf_support(client: Elasticsearch, supported: bool) -> None:
-    try:
-        cluster_name = client.info().get("cluster_name", "default")
-    except (ApiError, TransportError):  # pragma: no cover - network failure
-        return
+    cluster_name = getattr(client, "_grounded_rag_cluster_name", None)
+    if cluster_name is None:
+        try:
+            cluster_name = client.info().get("cluster_name", "default")
+        except (ApiError, TransportError):  # pragma: no cover - network failure
+            return
+        setattr(client, "_grounded_rag_cluster_name", cluster_name)
     _native_rrf_support[cluster_name] = supported
 
 

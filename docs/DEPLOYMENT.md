@@ -18,10 +18,9 @@ One optional service, off by default, behind the `tracing` profile:
 
 ## Resource needs
 
-- **Elasticsearch**: container limited to **4 GB** (`mem_limit: 4g`) with a **2 GB
-  JVM heap** (`ES_JAVA_OPTS=-Xms2g -Xmx2g`) — keep the heap at ~50% of the
-  container limit. The original prompts targeted ~2 GB; this project pins 4 GB / 2
-  GB heap.
+- **Elasticsearch**: container limited to **4 GB** (`mem_limit: 4g`) with a **1 GB
+  JVM heap** (`ES_JAVA_OPTS=-Xms1g -Xmx1g` by default in `docker-compose.yml`). Keep the heap at ~50% of the
+  container limit; you can raise it to 2 GB if the host has enough memory.
 - **Host**: budget **6–8 GB** total for ES + Postgres + API.
 - **Linux/WSL2 host**: `vm.max_map_count` must be **≥ 262144**
   (`sudo sysctl -w vm.max_map_count=262144`), or Elasticsearch fails to start.
@@ -74,6 +73,6 @@ the platform's secret store rather than a committed file.
 ## CI
 
 `.github/workflows/ci.yml` runs on push/PR with Elasticsearch and Postgres as
-service containers: it lints, ingests the committed sample corpus, runs the test
-suite, runs `python -m app.eval --no-answers` (retrieval metrics + the regression
-guard; no LLM key in CI), and uploads the eval report as an artifact.
+service containers: it lints, fetches the sample corpus from GitHub, ingests it,
+runs the test suite, runs `python -m app.eval --no-answers` (retrieval metrics +
+the regression guard; no LLM key in CI), and uploads the eval report as an artifact.
