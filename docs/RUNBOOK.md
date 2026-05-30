@@ -49,8 +49,8 @@ make eval                 # retrieval metrics across all modes + answer quality
 ```
 
 The hybrid-MRR regression test (`tests/test_eval_regression.py`) fails if hybrid
-MRR drops below `EVAL_HYBRID_MRR_THRESHOLD`. Investigate regressions; do not lower
-the threshold to make a run pass.
+MRR drops below `EVAL_HYBRID_MRR_THRESHOLD` (default `0.75`). Investigate
+regressions; do not lower the threshold to make a run pass.
 
 ## Tracing
 
