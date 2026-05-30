@@ -81,6 +81,18 @@ curl -s http://localhost:8000/metrics    # counts, tokens, cost, latency p50/p95
 | `/health` 503 on `postgres` | Postgres not ready | `make logs`; wait for the healthcheck, then retry. |
 | Review UI empty after asking | query_log write failed (DB down at ask time) | Check `make logs` for "Failed to write query_log"; verify Postgres health. |
 
+## Provider notes
+
+The Gemini free tier can return `429` with `quota=0` even on the first request of
+the day; this depends on account state, not just request volume. Do not treat a
+first-request 429 as a bug.
+
+The verified fallback is local Ollama. Set `LLM_PROVIDER=ollama` and pull the
+default model with `ollama pull llama3.1`.
+
+CI and the integration tests override the LLM provider with a deterministic
+in-process fake, so `/ask` is reproducible without any live LLM call.
+
 ## Backup / restore
 
 The data lives in two named Docker volumes: `grounded-rag-assistant_es-data` and
