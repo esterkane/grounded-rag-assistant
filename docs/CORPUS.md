@@ -48,7 +48,7 @@ expects, derived from git:
 | `title` | First H1 in the file, or the filename if no H1 |
 | `source_url` | The GitHub blob URL: `https://github.com/<org>/<repo>/blob/<ref>/<path>` |
 | `version` | The git tag or branch ref the file was fetched from |
-| `last_updated` | Date of the file's last commit (`git log -1 --format=%cs -- <file>`) |
+| `last_updated` | Corpus fetch time (UTC) — accurate per-snapshot, not per-file. Switching to a partial clone for true per-file dates is a future option, noted in 'Not implemented yet'. |
 
 `source_url` doubles as attribution — keep it accurate so generated answers cite
 back to the real Elastic source.

@@ -5,8 +5,13 @@ sentence-transformers
 psycopg[binary]
 pydantic
 pydantic-settings
+jinja2
+python-multipart
 google-genai
 httpx
 pypdf
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-otlp-proto-http
 pytest
 ruff

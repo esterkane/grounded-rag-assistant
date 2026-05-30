@@ -1,3 +1,5 @@
+import logging
+from contextlib import asynccontextmanager
 from typing import Any
 
 import psycopg
@@ -5,12 +7,42 @@ from elasticsearch import Elasticsearch
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 
+from app.api.admin import router as admin_router
+from app.api.ask import router as ask_router
+from app.api.metrics import router as metrics_router
+from app.api.review import router as review_router
+from app.api.search import router as search_router
 from app.config import Settings, get_settings
+from app.db.migrate import run_migrations
+from app.observability import configure_logging, configure_tracing
+
+logger = logging.getLogger(__name__)
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     app_settings = settings or get_settings()
-    app = FastAPI(title=app_settings.app_name)
+
+    @asynccontextmanager
+    async def lifespan(_: FastAPI):
+        # Tracing first so the logging trace-id filter sees a provider, then
+        # structured logging, then ensure the DB schema exists.
+        configure_tracing(app_settings)
+        configure_logging(app_settings)
+        # Best-effort: ensure the query_log/feedback tables exist so the review
+        # UI works out of the box. A DB hiccup must not block the API starting.
+        try:
+            run_migrations(app_settings)
+        except Exception:
+            logger.exception("Database migration on startup failed")
+        yield
+
+    app = FastAPI(title=app_settings.app_name, lifespan=lifespan)
+
+    app.include_router(search_router)
+    app.include_router(ask_router)
+    app.include_router(admin_router)
+    app.include_router(review_router)
+    app.include_router(metrics_router)
 
     @app.get("/health")
     def health() -> JSONResponse:

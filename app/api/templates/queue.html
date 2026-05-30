@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Queue{% endblock %}
+{% block content %}
+  <h1>{% if flagged %}Flagged queue{% else %}All queries{% endif %}</h1>
+  <div class="toolbar">
+    {% if flagged %}
+      <a href="/review?flagged=false">Show all queries</a>
+    {% else %}
+      <a href="/review?flagged=true">Show flagged only</a>
+    {% endif %}
+  </div>
+
+  {% if not logs %}
+    <p class="muted">No {% if flagged %}flagged {% endif %}queries yet.</p>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Query</th><th>Status</th><th>Mode</th>
+          <th>Latency</th><th>When</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+          <tr>
+            <td><a href="/review/{{ log.id }}">{{ log.id }}</a></td>
+            <td><a href="/review/{{ log.id }}">{{ log.query }}</a></td>
+            <td>
+              {% if log.flagged %}
+                <span class="badge flagged">flagged</span>
+              {% else %}
+                <span class="badge ok">answered</span>
+              {% endif %}
+            </td>
+            <td class="muted">{{ log.retrieval_mode }}</td>
+            <td class="muted">{{ log.latency_ms if log.latency_ms is not none else "–" }} ms</td>
+            <td class="muted">{{ log.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}

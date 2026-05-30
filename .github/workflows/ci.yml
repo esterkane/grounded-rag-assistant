@@ -1,0 +1,131 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      # Point the client libraries at the service containers (mapped to localhost).
+      ELASTICSEARCH_URL: http://localhost:9200
+      ELASTICSEARCH_INDEX: rag_chunks
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: grounded_rag
+      POSTGRES_USER: grounded_rag
+      POSTGRES_PASSWORD: grounded_rag
+      # No LLM key in CI: eval runs retrieval-only; integration tests use fakes.
+      LLM_PROVIDER: ollama
+      LOG_FORMAT: text
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      # Elasticsearch memory-maps many regions and refuses to boot if the kernel
+      # default vm.max_map_count is too low — the usual cause of a failed first
+      # push. This MUST run before the ES container starts, which is why ES is
+      # launched by a step below rather than in a `services:` block (service
+      # containers start before any step runs, so a step could not set this in
+      # time). See docs/INFRA.md.
+      - name: Raise vm.max_map_count for Elasticsearch
+        run: sudo sysctl -w vm.max_map_count=262144
+
+      # Start Postgres as a detached container with a healthcheck. Started by a
+      # step (not `services:`) to keep the ordering explicit alongside ES.
+      - name: Start Postgres
+        run: |
+          docker run -d --name postgres \
+            -e POSTGRES_DB=grounded_rag \
+            -e POSTGRES_USER=grounded_rag \
+            -e POSTGRES_PASSWORD=grounded_rag \
+            -p 5432:5432 \
+            --health-cmd "pg_isready -U grounded_rag -d grounded_rag" \
+            --health-interval 5s \
+            --health-timeout 5s \
+            --health-retries 20 \
+            postgres:16-alpine
+
+      # Start Elasticsearch only after vm.max_map_count has been raised. Image
+      # tag, single-node mode, and disabled security match docs/INFRA.md. The
+      # 2 GB heap fits comfortably on the ubuntu-latest runner.
+      - name: Start Elasticsearch
+        run: |
+          docker run -d --name elasticsearch \
+            -e discovery.type=single-node \
+            -e xpack.security.enabled=false \
+            -e xpack.security.http.ssl.enabled=false \
+            -e "ES_JAVA_OPTS=-Xms2g -Xmx2g" \
+            -p 9200:9200 \
+            --health-cmd "curl -fsS http://localhost:9200/_cluster/health || exit 1" \
+            --health-interval 10s \
+            --health-timeout 5s \
+            --health-retries 30 \
+            docker.elastic.co/elasticsearch/elasticsearch:9.4.1
+
+      # Gate the test run on Postgres reporting healthy, so a slow cold start
+      # does not race the first test. 18 * 5s = 90s timeout.
+      - name: Wait for Postgres to be healthy
+        run: |
+          for i in $(seq 1 18); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' postgres 2>/dev/null || echo starting)
+            echo "postgres health: $status ($((i * 5))s elapsed)"
+            if [ "$status" = "healthy" ]; then exit 0; fi
+            sleep 5
+          done
+          echo "Postgres did not become healthy within 90s" >&2
+          docker logs postgres || true
+          exit 1
+
+      # Same gate for Elasticsearch: a slow cold start must not race the tests.
+      # 18 * 5s = 90s timeout.
+      - name: Wait for Elasticsearch to be healthy
+        run: |
+          for i in $(seq 1 18); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' elasticsearch 2>/dev/null || echo starting)
+            echo "elasticsearch health: $status ($((i * 5))s elapsed)"
+            if [ "$status" = "healthy" ]; then exit 0; fi
+            sleep 5
+          done
+          echo "Elasticsearch did not become healthy within 90s" >&2
+          docker logs elasticsearch || true
+          exit 1
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint
+        run: ruff check .
+
+      # Fetch the corpus from the Elastic GitHub repos before ingesting.
+      # data/sample_corpus/ is gitignored, so this populates it. The shallow
+      # clones make the first run slower; that is expected.
+      - name: Fetch corpus
+        run: python -m app.ingestion.fetch_corpus
+
+      - name: Ingest sample corpus
+        run: python -m app.ingestion.run --path data/sample_corpus
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Run evaluation (retrieval metrics + regression guard)
+        run: python -m app.eval --no-answers
+
+      - name: Upload eval report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: eval_reports/
+          if-no-files-found: ignore

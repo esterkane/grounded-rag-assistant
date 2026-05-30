@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Query {{ log.id }}{% endblock %}
+{% block content %}
+  <div class="toolbar"><a href="/review">&larr; Back to queue</a></div>
+
+  <h1>Query #{{ log.id }}</h1>
+  <p>
+    {% if log.flagged %}
+      <span class="badge flagged">flagged</span>
+    {% else %}
+      <span class="badge ok">answered</span>
+    {% endif %}
+    <span class="muted">
+      {{ log.retrieval_mode }} · {{ log.provider }} ·
+      {{ log.latency_ms if log.latency_ms is not none else "–" }} ms ·
+      {{ log.created_at.strftime("%Y-%m-%d %H:%M") }}
+    </span>
+  </p>
+
+  <h2>Question</h2>
+  <p>{{ log.query }}</p>
+
+  <h2>Answer</h2>
+  <p>{{ log.answer or "(insufficient evidence)" }}</p>
+
+  {% set claims = log.payload.get("claims", []) %}
+  {% if claims %}
+    <h2>Claims &amp; citations</h2>
+    <ul>
+      {% for claim in claims %}
+        <li>
+          {{ claim.text }}
+          {% for cid in claim.citations %}<span class="cite">{{ cid }}</span> {% endfor %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% set sources = log.payload.get("sources", []) %}
+  <h2>Cited sources ({{ sources | length }})</h2>
+  {% if sources %}
+    {% for source in sources %}
+      <div class="chunk">
+        <div><strong>{{ source.title or source.chunk_id }}</strong></div>
+        <div class="muted"><span class="cite">{{ source.chunk_id }}</span></div>
+        {% if source.source_url %}
+          <div class="muted"><a href="{{ source.source_url }}">{{ source.source_url }}</a></div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="muted">No sources were cited for this answer.</p>
+  {% endif %}
+
+  {% set dropped = log.payload.get("dropped_citations", []) %}
+  {% if dropped %}
+    <p class="muted">Dropped citations (did not map to a retrieved chunk):
+      {% for cid in dropped %}<span class="cite">{{ cid }}</span> {% endfor %}
+    </p>
+  {% endif %}
+
+  <h2>Feedback</h2>
+  {% if log.feedback %}
+    <ul>
+      {% for fb in log.feedback %}
+        <li>
+          <strong>{{ fb.rating }}</strong>
+          {% if fb.reviewer %}by {{ fb.reviewer }}{% endif %}
+          <span class="muted">({{ fb.created_at.strftime("%Y-%m-%d %H:%M") }})</span>
+          {% if fb.correction_text %}<br>{{ fb.correction_text }}{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">No feedback yet.</p>
+  {% endif %}
+
+  <form class="feedback" method="post" action="/review/{{ log.id }}/feedback">
+    <label>Rating</label>
+    <label><input type="radio" name="rating" value="up" checked> 👍 up</label>
+    <label><input type="radio" name="rating" value="down"> 👎 down</label>
+    <label for="correction_text">Correction (optional)</label>
+    <textarea id="correction_text" name="correction_text" rows="3"></textarea>
+    <label for="reviewer">Reviewer (optional)</label>
+    <input type="text" id="reviewer" name="reviewer">
+    <p><button type="submit">Submit feedback</button></p>
+  </form>
+{% endblock %}

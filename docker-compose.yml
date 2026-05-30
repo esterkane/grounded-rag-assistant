@@ -48,6 +48,9 @@ services:
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       POSTGRES_HOST: postgres
+      # Injected from the gitignored .env (not committed). Overrides the empty
+      # value in .env.example so the gemini provider works locally.
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
     ports:
       - "8000:8000"
     depends_on:
@@ -55,6 +58,19 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+
+  # Optional trace backend. Off by default; start with:
+  #   docker compose --profile tracing up -d
+  # then set OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318 for the api service.
+  # UI: http://localhost:16686
+  jaeger:
+    image: jaegertracing/all-in-one:1.62.0
+    profiles: ["tracing"]
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "4318:4318"    # OTLP HTTP receiver
 
 volumes:
   es-data:

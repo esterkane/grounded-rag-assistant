@@ -57,6 +57,9 @@ def main() -> None:
     parser.add_argument("--path", type=Path, required=True, help="File or directory to ingest.")
     args = parser.parse_args()
 
+    from app.observability import configure_logging
+
+    configure_logging(get_settings())
     summary = ingest_path(args.path)
     print(
         "Ingest summary: "

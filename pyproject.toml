@@ -11,9 +11,14 @@ dependencies = [
     "psycopg[binary]",
     "pydantic",
     "pydantic-settings",
+    "jinja2",
+    "python-multipart",
     "google-genai",
     "httpx",
     "pypdf",
+    "opentelemetry-api",
+    "opentelemetry-sdk",
+    "opentelemetry-exporter-otlp-proto-http",
 ]
 
 [project.optional-dependencies]
@@ -29,6 +34,13 @@ target-version = "py311"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI dependency injection idiom: Depends()/Query() are called in defaults.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+markers = [
+    "live_network: test hits the live network (GitHub); skipped unless opted in",
+]
