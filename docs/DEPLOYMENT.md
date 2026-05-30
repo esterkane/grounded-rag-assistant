@@ -73,6 +73,6 @@ the platform's secret store rather than a committed file.
 ## CI
 
 `.github/workflows/ci.yml` runs on push/PR with Elasticsearch and Postgres as
-service containers: it lints, ingests the committed sample corpus, runs the test
-suite, runs `python -m app.eval --no-answers` (retrieval metrics + the regression
-guard; no LLM key in CI), and uploads the eval report as an artifact.
+service containers: it lints, fetches the sample corpus from GitHub, ingests it,
+runs the test suite, runs `python -m app.eval --no-answers` (retrieval metrics +
+the regression guard; no LLM key in CI), and uploads the eval report as an artifact.
