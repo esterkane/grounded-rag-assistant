@@ -68,6 +68,12 @@ jobs:
       - name: Lint
         run: ruff check .
 
+      # Fetch the corpus from the Elastic GitHub repos before ingesting.
+      # data/sample_corpus/ is gitignored, so this populates it. The shallow
+      # clones make the first run slower; that is expected.
+      - name: Fetch corpus
+        run: python -m app.ingestion.fetch_corpus
+
       - name: Ingest sample corpus
         run: python -m app.ingestion.run --path data/sample_corpus
 

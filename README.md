@@ -47,6 +47,7 @@ the host (see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)).
 cp .env.example .env                       # set GEMINI_API_KEY, or LLM_PROVIDER=ollama
 make up                                     # build + start ES, Postgres, API
 curl -s http://localhost:8000/health        # 200 when ES + Postgres are healthy
+make corpus                                 # fetch the corpus from Elastic GitHub repos
 make ingest                                 # index the sample corpus (idempotent)
 
 # Ask a grounded question:
@@ -101,10 +102,11 @@ Elasticsearch + Postgres service containers on every push/PR.
 - [Build phases](docs/BUILD_PHASES.md) · [Corpus](docs/CORPUS.md) ·
   [Infra](docs/INFRA.md)
 
+The corpus itself is not committed: `make corpus` fetches it reproducibly from
+public Elastic GitHub repos into the gitignored `data/sample_corpus/` (see
+[docs/CORPUS.md](docs/CORPUS.md)). Run it before `make ingest`.
+
 ## Not implemented yet
 
-- The corpus fetch script (`app/ingestion/fetch_corpus.py` / `make corpus`)
-  described in [docs/CORPUS.md](docs/CORPUS.md) is not built; the sample corpus
-  under `data/sample_corpus/` is committed directly.
 - The LangGraph + MCP layer ("Project 2") that wraps the retrieval and generation
   functions as tools is future work — the core is kept FastAPI-free to enable it.

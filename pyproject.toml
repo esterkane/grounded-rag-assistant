@@ -41,3 +41,6 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+markers = [
+    "live_network: test hits the live network (GitHub); skipped unless opted in",
+]
