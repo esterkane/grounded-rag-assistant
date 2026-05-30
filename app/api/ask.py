@@ -82,6 +82,14 @@ def _record_query_log(
     retrieval_mode = "hybrid+rerank" if rerank else "hybrid"
     usage = answer.usage
     cost = estimate_cost(answer.model, usage)
+
+    provider_name = settings.llm_provider
+    if answer.model:
+        if answer.model == settings.ollama_model:
+            provider_name = "ollama"
+        elif answer.model.startswith("gemini"):
+            provider_name = "gemini"
+
     try:
         with connect(settings) as conn:
             insert_query_log(
@@ -91,13 +99,14 @@ def _record_query_log(
                 answered=answer.answered,
                 flagged=flagged,
                 latency_ms=latency_ms,
-                provider=settings.llm_provider,
+                provider=provider_name,
                 retrieval_mode=retrieval_mode,
                 payload=answer.model_dump(),
                 model=answer.model,
                 input_tokens=usage.input_tokens if usage else 0,
                 output_tokens=usage.output_tokens if usage else 0,
                 estimated_cost_usd=cost,
+            )
             )
             conn.commit()
     except Exception:
