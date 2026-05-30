@@ -108,5 +108,8 @@ public Elastic GitHub repos into the gitignored `data/sample_corpus/` (see
 
 ## Not implemented yet
 
+- True per-file `last_updated` dates. `make corpus` uses a `--depth 1` clone, so
+  every fetched file is stamped with the corpus fetch date (UTC). A partial clone
+  (`--filter=blob:none`) would give real per-file commit dates — future work.
 - The LangGraph + MCP layer ("Project 2") that wraps the retrieval and generation
   functions as tools is future work — the core is kept FastAPI-free to enable it.

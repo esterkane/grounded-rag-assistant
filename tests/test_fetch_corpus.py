@@ -7,8 +7,6 @@ is skipped unless ``RUN_LIVE_CORPUS_FETCH`` is set.
 """
 
 import os
-import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -16,6 +14,7 @@ import pytest
 from app.ingestion.fetch_corpus import (
     FrontMatter,
     RepoSource,
+    corpus_fetch_date,
     derive_front_matter,
     extract_title,
     fetch_corpus,
@@ -25,50 +24,40 @@ from app.ingestion.fetch_corpus import (
 )
 from app.ingestion.loaders import load_markdown
 
-# The git-fixture tests need a real git binary. It is present on the host and on
-# CI runners, but not inside the api Docker image (where fetching is never run),
-# so skip rather than fail there.
-requires_git = pytest.mark.skipif(shutil.which("git") is None, reason="git binary not available")
 
-
-def _git(args: list[str], cwd: Path, date: str | None = None) -> None:
-    env = dict(os.environ)
-    if date is not None:
-        env["GIT_AUTHOR_DATE"] = date
-        env["GIT_COMMITTER_DATE"] = date
-    subprocess.run(["git", *args], cwd=cwd, env=env, check=True, capture_output=True)
-
-
-def _init_repo(repo_dir: Path) -> None:
-    repo_dir.mkdir(parents=True, exist_ok=True)
-    _git(["init", "-q"], repo_dir)
-    _git(["config", "user.email", "test@example.com"], repo_dir)
-    _git(["config", "user.name", "Test"], repo_dir)
-
-
-@requires_git
-def test_derive_front_matter_from_fake_git_history(tmp_path: Path) -> None:
-    repo_dir = tmp_path / "elasticsearch-labs"
-    _init_repo(repo_dir)
-    rel_path = "notebooks/hybrid-search.md"
-    target = repo_dir / rel_path
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(
+def test_derive_front_matter_stamps_the_fetch_date(tmp_path: Path) -> None:
+    repo = RepoSource("elastic", "elasticsearch-labs", ref="main")
+    (tmp_path / "notebooks").mkdir()
+    (tmp_path / "notebooks/hybrid-search.md").write_text(
         "# Hybrid Search with RRF\n\nReciprocal rank fusion combines BM25 and kNN.\n",
         encoding="utf-8",
     )
-    _git(["add", "."], repo_dir)
-    _git(["commit", "-q", "-m", "add doc"], repo_dir, date="2024-03-14T12:00:00")
 
-    repo = RepoSource("elastic", "elasticsearch-labs", ref="main")
-    fm = derive_front_matter(repo, repo_dir, rel_path)
+    fetched_at = "2026-05-30"
+    fm = derive_front_matter(repo, tmp_path, "notebooks/hybrid-search.md", fetched_at)
 
     assert fm.title == "Hybrid Search with RRF"
     assert fm.source_url == (
         "https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/hybrid-search.md"
     )
     assert fm.version == "main"
-    assert fm.last_updated == "2024-03-14"
+    # last_updated is the corpus snapshot date, not a per-file commit date.
+    assert fm.last_updated == fetched_at
+
+
+def test_one_fetch_shares_a_single_last_updated_across_files(tmp_path: Path) -> None:
+    repo = RepoSource("elastic", "elasticsearch-labs", ref="main")
+    (tmp_path / "a.md").write_text("# Vector Search\n\nDense kNN retrieval.\n", encoding="utf-8")
+    (tmp_path / "b.md").write_text("# Semantic Search\n\nEmbeddings recall.\n", encoding="utf-8")
+
+    fetched_at = corpus_fetch_date()
+    fm_a = derive_front_matter(repo, tmp_path, "a.md", fetched_at)
+    fm_b = derive_front_matter(repo, tmp_path, "b.md", fetched_at)
+
+    # Every file from the same fetch carries the same snapshot stamp.
+    assert fm_a.last_updated == fm_b.last_updated == fetched_at
+    # corpus_fetch_date() is an ISO date (YYYY-MM-DD).
+    assert len(fetched_at) == 10 and fetched_at.count("-") == 2
 
 
 def test_rendered_document_roundtrips_through_the_loader(tmp_path: Path) -> None:

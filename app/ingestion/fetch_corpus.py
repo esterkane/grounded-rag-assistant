@@ -19,6 +19,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -116,17 +117,9 @@ def clone_or_update(repo: RepoSource, work_dir: Path) -> Path:
     return dest
 
 
-def git_last_commit_date(repo_dir: Path, rel_path: str) -> str:
-    """Return the file's last commit date (``%cs``), or ``unknown``.
-
-    On a ``--depth 1`` clone git only holds the tip commit, so this resolves to
-    the tip commit date for every file — see docs/CORPUS.md.
-    """
-    result = _run_git(["log", "-1", "--format=%cs", "--", rel_path], cwd=repo_dir)
-    date = result.stdout.strip()
-    if result.returncode != 0 or not date:
-        return "unknown"
-    return date
+def corpus_fetch_date() -> str:
+    """Today's date in UTC, ISO format (YYYY-MM-DD) — the stamp for this fetch."""
+    return time.strftime("%Y-%m-%d", time.gmtime())
 
 
 # --- Selection & front-matter derivation ----------------------------------
@@ -154,8 +147,15 @@ def extract_title(body: str, fallback: str) -> str:
     return " ".join(title.split()).strip('"').strip()
 
 
-def derive_front_matter(repo: RepoSource, repo_dir: Path, rel_path: str) -> FrontMatter:
-    """Derive front-matter for one file from git + content (docs/CORPUS.md mapping)."""
+def derive_front_matter(
+    repo: RepoSource, repo_dir: Path, rel_path: str, fetched_at: str
+) -> FrontMatter:
+    """Derive front-matter for one file from content + fetch date (docs/CORPUS.md mapping).
+
+    ``last_updated`` is the corpus fetch date (``fetched_at``), shared by every
+    file in a run: a ``--depth 1`` clone has no per-file history, so a per-file
+    commit date would just be the tip commit's date for everything.
+    """
     text = (repo_dir / rel_path).read_text(encoding="utf-8", errors="replace")
     _, body = split_existing_front_matter(text)
     fallback_title = Path(rel_path).stem.replace("-", " ").replace("_", " ").title()
@@ -163,7 +163,7 @@ def derive_front_matter(repo: RepoSource, repo_dir: Path, rel_path: str) -> Fron
         title=extract_title(body, fallback_title),
         source_url=f"https://github.com/{repo.org}/{repo.repo}/blob/{repo.ref}/{rel_path}",
         version=repo.ref,
-        last_updated=git_last_commit_date(repo_dir, rel_path),
+        last_updated=fetched_at,
     )
 
 
@@ -244,6 +244,7 @@ def fetch_corpus(
     if work_dir is None:
         work_dir = Path(tempfile.gettempdir()) / "grounded-rag-corpus"
 
+    fetched_at = corpus_fetch_date()
     repo_index = {repo: i for i, repo in enumerate(repos)}
     all_candidates: list[Candidate] = []
     skipped_total = 0
@@ -267,7 +268,9 @@ def fetch_corpus(
     with tempfile.TemporaryDirectory(prefix="corpus-stage-") as stage_root_str:
         stage_root = Path(stage_root_str)
         for cand in chosen:
-            front_matter = derive_front_matter(cand.repo, cand.repo_dir, cand.rel_path)
+            front_matter = derive_front_matter(
+                cand.repo, cand.repo_dir, cand.rel_path, fetched_at
+            )
             _, body = split_existing_front_matter(
                 (cand.repo_dir / cand.rel_path).read_text(encoding="utf-8", errors="replace")
             )
