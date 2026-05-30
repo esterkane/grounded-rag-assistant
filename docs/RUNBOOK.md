@@ -77,7 +77,7 @@ curl -s http://localhost:8000/metrics    # counts, tokens, cost, latency p50/p95
 | ES container exits / `max virtual memory areas vm.max_map_count too low` | Host `vm.max_map_count` below 262144 | `sudo sysctl -w vm.max_map_count=262144` (on WSL2, set on the host/`.wslconfig`). |
 | `docker compose up` OOM-kills ES | Docker has < ~6 GB | Raise Docker's memory limit to 6–8 GB. |
 | `/ask` returns 500, logs show `GEMINI_API_KEY is not set` | Gemini selected without a key | Set `GEMINI_API_KEY` (gitignored `.env`) or set `LLM_PROVIDER=ollama`. |
-| `/ask` answers are all "insufficient", logs show `429 RESOURCE_EXHAUSTED` | Gemini free-tier quota exhausted | Check quota/billing in Google AI Studio, or switch to `ollama`. |
+| `/ask` answers are all "insufficient", logs show `429 RESOURCE_EXHAUSTED` | Gemini free-tier quota exhausted | Set `LLM_FALLBACK=ollama` (auto-degrades to local Ollama; see Provider notes), or switch primary to `ollama`. |
 | `/health` 503 on `postgres` | Postgres not ready | `make logs`; wait for the healthcheck, then retry. |
 | Review UI empty after asking | query_log write failed (DB down at ask time) | Check `make logs` for "Failed to write query_log"; verify Postgres health. |
 
@@ -87,8 +87,13 @@ The Gemini free tier can return `429` with `quota=0` even on the first request o
 the day; this depends on account state, not just request volume. Do not treat a
 first-request 429 as a bug.
 
-The verified fallback is local Ollama. Set `LLM_PROVIDER=ollama` and pull the
-default model with `ollama pull llama3.1`.
+The verified fallback is local Ollama. Pull the default model with
+`ollama pull llama3.1`. Either run it as the primary (`LLM_PROVIDER=ollama`), or
+leave it as the automatic fallback: with `LLM_FALLBACK=ollama` (the default in
+`.env.example`), `/ask` keeps Gemini as primary but degrades to Ollama when
+Gemini's tokens are unavailable — a 429 / `RESOURCE_EXHAUSTED` quota error, or no
+`GEMINI_API_KEY` at all. The fallback needs `OLLAMA_BASE_URL` reachable and the
+model pulled; a non-quota error (e.g. a malformed request) is not masked.
 
 CI and the integration tests override the LLM provider with a deterministic
 in-process fake, so `/ask` is reproducible without any live LLM call.

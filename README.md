@@ -36,7 +36,8 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - PostgreSQL for application data (query logs, feedback)
 - Local `sentence-transformers` embeddings (`BAAI/bge-small-en-v1.5`)
 - Provider-abstracted generation: Gemini free tier (`gemini-2.5-flash`) or local
-  Ollama (`gemini-2.0-flash` was retired by Google on 2026-03-03)
+  Ollama, with automatic Ollama fallback when Gemini's quota is exhausted
+  (`LLM_FALLBACK`; `gemini-2.0-flash` was retired by Google on 2026-03-03)
 - OpenTelemetry tracing; Docker Compose for local development
 
 ## Quickstart

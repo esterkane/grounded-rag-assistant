@@ -5,36 +5,127 @@ from types import SimpleNamespace
 import pytest
 
 from app.config import Settings
-from app.generation.providers import GeminiProvider, OllamaProvider, build_provider
+from app.generation.providers import (
+    FallbackProvider,
+    GeminiProvider,
+    OllamaProvider,
+    build_provider,
+)
+from app.generation.providers.base import GenerationResult, LLMProvider
 
 
 def test_factory_selects_gemini() -> None:
-    settings = Settings(llm_provider="gemini", gemini_api_key="dummy-key")
+    settings = Settings(
+        llm_provider="gemini", gemini_api_key="dummy-key", llm_fallback=""
+    )
     provider = build_provider(settings)
     assert isinstance(provider, GeminiProvider)
 
 
 def test_factory_selects_ollama() -> None:
-    settings = Settings(llm_provider="ollama")
+    settings = Settings(llm_provider="ollama", llm_fallback="")
     provider = build_provider(settings)
     assert isinstance(provider, OllamaProvider)
 
 
 def test_factory_rejects_unknown_provider() -> None:
-    settings = Settings(llm_provider="openai")
+    settings = Settings(llm_provider="openai", llm_fallback="")
     with pytest.raises(ValueError, match="Unsupported LLM_PROVIDER"):
         build_provider(settings)
 
 
 def test_gemini_requires_api_key() -> None:
-    settings = Settings(llm_provider="gemini", gemini_api_key="")
+    settings = Settings(llm_provider="gemini", gemini_api_key="", llm_fallback="")
     with pytest.raises(ValueError, match="GEMINI_API_KEY"):
         build_provider(settings)
 
 
+def test_factory_wraps_primary_with_fallback() -> None:
+    """LLM_FALLBACK=ollama wraps Gemini so 429s degrade to local Ollama."""
+    settings = Settings(
+        llm_provider="gemini", gemini_api_key="dummy-key", llm_fallback="ollama"
+    )
+    provider = build_provider(settings)
+    assert isinstance(provider, FallbackProvider)
+    assert isinstance(provider.primary, GeminiProvider)
+    assert isinstance(provider.fallback, OllamaProvider)
+
+
+def test_factory_degrades_to_fallback_without_gemini_key() -> None:
+    """No GEMINI_API_KEY == tokens unavailable: use the fallback directly."""
+    settings = Settings(
+        llm_provider="gemini", gemini_api_key="", llm_fallback="ollama"
+    )
+    provider = build_provider(settings)
+    assert isinstance(provider, OllamaProvider)
+
+
+def test_factory_fallback_equal_to_primary_is_single() -> None:
+    settings = Settings(llm_provider="ollama", llm_fallback="ollama")
+    provider = build_provider(settings)
+    assert isinstance(provider, OllamaProvider)
+
+
+class _RaisingProvider(LLMProvider):
+    def __init__(self, exc: Exception) -> None:
+        self.exc = exc
+
+    def generate(self, messages, *, temperature=0.0, json_output=True, **opts):
+        raise self.exc
+
+
+class _OkProvider(LLMProvider):
+    def __init__(self, text: str) -> None:
+        self.text = text
+        self.calls = 0
+
+    def generate(self, messages, *, temperature=0.0, json_output=True, **opts):
+        self.calls += 1
+        return self.text
+
+    def generate_with_usage(self, messages, **opts) -> GenerationResult:
+        self.calls += 1
+        return GenerationResult(text=self.text, model="fallback-model")
+
+
+def test_fallback_used_on_rate_limit() -> None:
+    primary = _RaisingProvider(Exception("429 RESOURCE_EXHAUSTED"))
+    fallback = _OkProvider('{"answered": false}')
+    provider = FallbackProvider(primary, fallback)
+
+    result = provider.generate_with_usage([{"role": "user", "content": "hi"}])
+
+    assert result.text == '{"answered": false}'
+    assert fallback.calls == 1
+
+
+def test_non_rate_limit_error_propagates() -> None:
+    """A non-quota error is a real bug; it must not be silently masked."""
+    primary = _RaisingProvider(ValueError("malformed request"))
+    fallback = _OkProvider("should-not-be-used")
+    provider = FallbackProvider(primary, fallback)
+
+    with pytest.raises(ValueError, match="malformed request"):
+        provider.generate_with_usage([{"role": "user", "content": "hi"}])
+    assert fallback.calls == 0
+
+
+def test_fallback_not_used_when_primary_succeeds() -> None:
+    primary = _OkProvider('{"answered": true}')
+    fallback = _OkProvider("unused")
+    provider = FallbackProvider(primary, fallback)
+
+    result = provider.generate_with_usage([{"role": "user", "content": "hi"}])
+
+    assert result.text == '{"answered": true}'
+    assert fallback.calls == 0
+
+
 def test_gemini_default_model_is_2_5_flash() -> None:
     """2.0-flash was retired 2026-03-03; the default must be 2.5-flash."""
-    settings = Settings(llm_provider="gemini", gemini_api_key="dummy-key")
+    settings = Settings(
+        llm_provider="gemini", gemini_api_key="dummy-key", llm_fallback=""
+    )
     provider = build_provider(settings)
     assert provider.model == "gemini-2.5-flash"
 
