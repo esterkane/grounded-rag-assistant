@@ -191,7 +191,7 @@ def _supports_native_rrf(client: Elasticsearch) -> bool:
             cluster_name = client.info().get("cluster_name", "default")
         except (ApiError, TransportError):  # pragma: no cover - network failure
             return False
-        setattr(client, "_grounded_rag_cluster_name", cluster_name)
+        client._grounded_rag_cluster_name = cluster_name
     return _native_rrf_support.get(cluster_name, True)
 
 
@@ -202,7 +202,7 @@ def _record_native_rrf_support(client: Elasticsearch, supported: bool) -> None:
             cluster_name = client.info().get("cluster_name", "default")
         except (ApiError, TransportError):  # pragma: no cover - network failure
             return
-        setattr(client, "_grounded_rag_cluster_name", cluster_name)
+        client._grounded_rag_cluster_name = cluster_name
     _native_rrf_support[cluster_name] = supported
 
 
