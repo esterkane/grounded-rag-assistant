@@ -84,7 +84,7 @@ Constraints (apply to EVERY phase):
   No API for embeddings.
 - LLM generation: provider-abstracted, two providers — "gemini" (google-genai,
   gemini-2.5-flash, free tier) and "ollama" (local). Default = gemini, configurable
-  via env. (gemini-2.0-flash was retired by Google on 2026-03-03.)
+  via env. (gemini-2.0-flash is deprecated and shuts down 2026-06-01.)
 - IMPORTANT: a later phase will add a LangGraph + MCP layer on top of this repo.
   Keep retrieval and generation as cleanly separated, importable functions with
   no FastAPI coupling, so they can later be exposed as MCP tools without rework.

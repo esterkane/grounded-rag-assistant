@@ -37,7 +37,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - Local `sentence-transformers` embeddings (`BAAI/bge-small-en-v1.5`)
 - Provider-abstracted generation: Gemini free tier (`gemini-2.5-flash`) or local
   Ollama, with automatic Ollama fallback when Gemini's quota is exhausted
-  (`LLM_FALLBACK`; `gemini-2.0-flash` was retired by Google on 2026-03-03)
+  (`LLM_FALLBACK`; `gemini-2.0-flash` is deprecated and shuts down 2026-06-01)
 - OpenTelemetry tracing; Docker Compose for local development
 
 ## Quickstart
@@ -115,3 +115,12 @@ public Elastic GitHub repos into the gitignored `data/sample_corpus/` (see
   (`--filter=blob:none`) would give real per-file commit dates — future work.
 - The LangGraph + MCP layer ("Project 2") that wraps the retrieval and generation
   functions as tools is future work — the core is kept FastAPI-free to enable it.
+
+## Caveats
+
+- The Gemini-to-Ollama fallback works per request, so it does not rescue a full
+  batch eval: the answer-quality pass still exhausts Gemini's free-tier rate limit
+  faster than the fallback trips on each call. For a clean eval pass, set
+  `LLM_PROVIDER=ollama` and run the eval directly against the local model.
+- `gemini-2.0-flash` is deprecated and shuts down on 2026-06-01, so the project
+  defaults to `gemini-2.5-flash`. Override the model with `GEMINI_MODEL`.

@@ -19,7 +19,7 @@ Main stack:
 - Embeddings: local `sentence-transformers`, default model `BAAI/bge-small-en-v1.5`
 - LLM generation: provider-abstracted — `gemini` (`google-genai`, `gemini-2.5-flash`,
   free tier) and `ollama` (local). Selected by the `LLM_PROVIDER` env var.
-  (`gemini-2.0-flash` was retired by Google on 2026-03-03.)
+  (`gemini-2.0-flash` is deprecated and shuts down 2026-06-01.)
 - Lint/format: `ruff`. Tests: `pytest`. Local infra: Docker Compose.
 
 Important entry points:

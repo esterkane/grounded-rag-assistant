@@ -1,6 +1,6 @@
 """Gemini provider (google-genai, free-tier gemini-2.5-flash).
 
-gemini-2.0-flash was retired by Google on 2026-03-03; gemini-2.5-flash is the
+gemini-2.0-flash is deprecated and shuts down 2026-06-01; gemini-2.5-flash is the
 current free-tier default. The model name stays configurable via GEMINI_MODEL.
 """
 

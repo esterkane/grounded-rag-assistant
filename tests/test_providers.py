@@ -122,7 +122,7 @@ def test_fallback_not_used_when_primary_succeeds() -> None:
 
 
 def test_gemini_default_model_is_2_5_flash() -> None:
-    """2.0-flash was retired 2026-03-03; the default must be 2.5-flash."""
+    """2.0-flash is deprecated (shuts down 2026-06-01); the default must be 2.5-flash."""
     settings = Settings(
         llm_provider="gemini", gemini_api_key="dummy-key", llm_fallback=""
     )
