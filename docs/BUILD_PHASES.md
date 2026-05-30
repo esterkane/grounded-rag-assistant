@@ -83,8 +83,8 @@ Constraints (apply to EVERY phase):
 - Embeddings: local sentence-transformers, default model BAAI/bge-small-en-v1.5.
   No API for embeddings.
 - LLM generation: provider-abstracted, two providers — "gemini" (google-genai,
-  gemini-2.0-flash, free tier) and "ollama" (local). Default = gemini, configurable
-  via env.
+  gemini-2.5-flash, free tier) and "ollama" (local). Default = gemini, configurable
+  via env. (gemini-2.0-flash was retired by Google on 2026-03-03.)
 - IMPORTANT: a later phase will add a LangGraph + MCP layer on top of this repo.
   Keep retrieval and generation as cleanly separated, importable functions with
   no FastAPI coupling, so they can later be exposed as MCP tools without rework.
@@ -193,7 +193,7 @@ an explicit "insufficient evidence" path.
 Requirements:
 1. Provider abstraction in app/generation/providers/: base LLMProvider interface
    with generate(messages, **opts). Implement GeminiProvider (google-genai,
-   gemini-2.0-flash, reads GEMINI_API_KEY) and OllamaProvider (local HTTP).
+   gemini-2.5-flash, reads GEMINI_API_KEY) and OllamaProvider (local HTTP).
    Factory selects via LLM_PROVIDER env. The app must run end to end with either
    provider.
 2. app/generation/answerer.py — importable, no FastAPI dependency: takes a query,

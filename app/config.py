@@ -54,7 +54,7 @@ class Settings(BaseSettings):
     eval_answer_sample: int = 6
 
     llm_provider: str = "gemini"
-    gemini_model: str = "gemini-2.0-flash"
+    gemini_model: str = "gemini-2.5-flash"
     gemini_api_key: str = Field(default="", repr=False)
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.1"

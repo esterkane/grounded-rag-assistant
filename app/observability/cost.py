@@ -15,7 +15,9 @@ from app.generation.models import TokenUsage
 
 # model -> (input_usd_per_1k, output_usd_per_1k). Public list prices.
 PRICE_TABLE: dict[str, tuple[float, float]] = {
-    # Gemini 2.0 Flash list price (free tier in practice; logged anyway).
+    # Gemini Flash list prices (free tier in practice; logged anyway).
+    # gemini-2.0-flash was retired 2026-03-03 but kept here for historical rows.
+    "gemini-2.5-flash": (0.0003, 0.0025),
     "gemini-2.0-flash": (0.0001, 0.0004),
     "gemini-1.5-flash": (0.000075, 0.0003),
     "gemini-1.5-pro": (0.00125, 0.005),
