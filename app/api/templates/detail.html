@@ -37,7 +37,7 @@
   {% endif %}
 
   {% set sources = log.payload.get("sources", []) %}
-  <h2>Retrieved chunks ({{ sources | length }})</h2>
+  <h2>Cited sources ({{ sources | length }})</h2>
   {% if sources %}
     {% for source in sources %}
       <div class="chunk">
@@ -49,7 +49,7 @@
       </div>
     {% endfor %}
   {% else %}
-    <p class="muted">No chunks were cited for this answer.</p>
+    <p class="muted">No sources were cited for this answer.</p>
   {% endif %}
 
   {% set dropped = log.payload.get("dropped_citations", []) %}
