@@ -51,5 +51,7 @@ def percentile(values: list[float], pct: float) -> float:
     if not values:
         return 0.0
     ordered = sorted(values)
-    rank = max(1, min(len(ordered), round(pct / 100 * len(ordered))))
+    import math
+
+    rank = max(1, min(len(ordered), math.ceil(pct / 100 * len(ordered))))
     return ordered[rank - 1]
