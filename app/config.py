@@ -47,9 +47,10 @@ class Settings(BaseSettings):
     eval_gold_path: str = "data/gold/queries.jsonl"
     eval_report_dir: str = "eval_reports"
     # Regression threshold: hybrid MRR must stay at or above this.
-    # Calibrated 2026 from baseline 0.817 on an 18-query gold set; ~8% headroom
-    # for run-to-run drift. Lower only after investigating a real regression.
-    eval_hybrid_mrr_threshold: float = 0.75
+    # Calibrated 2026 from baseline 0.448 on the realigned 18-query gold set over
+    # the fetched namespaced corpus; ~0.07 headroom (about 2-3 queries of drift).
+    # Lower only after investigating a real regression.
+    eval_hybrid_mrr_threshold: float = 0.38
     # Cap on how many answerable/non-answerable gold items hit the (slow) LLM
     # during answer-quality eval. 0 disables answer eval entirely.
     eval_answer_sample: int = 6

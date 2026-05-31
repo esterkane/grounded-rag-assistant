@@ -107,7 +107,6 @@ def _record_query_log(
                 output_tokens=usage.output_tokens if usage else 0,
                 estimated_cost_usd=cost,
             )
-            )
             conn.commit()
     except Exception:
         logger.exception("Failed to write query_log for query=%r", answer.query)

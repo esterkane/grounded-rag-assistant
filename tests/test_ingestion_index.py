@@ -14,9 +14,11 @@ def test_ingest_indexes_known_chunk_with_vector() -> None:
 
     summary = ingest_path(Path("data/sample_corpus"))
 
+    # A known chunk from the fetched corpus (data/sample_corpus/<repo_slug>/...).
+    known_path = "data/sample_corpus/docs-content/solutions/search/rag.md"
     response = client.search(
         index=settings.elasticsearch_index,
-        query={"match": {"title": "Elasticsearch Vector Search for RAG"}},
+        query={"term": {"source_path": known_path}},
         size=1,
     )
 
@@ -24,7 +26,8 @@ def test_ingest_indexes_known_chunk_with_vector() -> None:
     assert summary.chunks >= 4
     assert response["hits"]["hits"]
     source = response["hits"]["hits"][0]["_source"]
-    assert source["title"] == "Elasticsearch Vector Search for RAG"
-    assert source["source_url"].startswith("https://www.elastic.co/")
+    assert source["source_path"] == known_path
+    assert source["title"] == "RAG [_retrieval_augmented_generation]"
+    assert source["source_url"].startswith("https://github.com/elastic/")
     assert source["permissions"] == ["public"]
     assert source["embedding"]
