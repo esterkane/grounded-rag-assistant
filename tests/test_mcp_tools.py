@@ -24,20 +24,46 @@ from app.mcp.tools import (
 class FakeES:
     """Minimal Elasticsearch stand-in for the handlers' .search / .count calls."""
 
-    def __init__(self, *, hits=None, count=0, agg_buckets=None, search_error=None):
+    def __init__(self, *, hits=None, count=0, agg_buckets=None, docs=None, search_error=None):
         self._hits = hits or []
         self._count = count
         self._agg_buckets = agg_buckets
+        self._docs = docs  # for list_documents: honor permission/prefix filters
         self._search_error = search_error
         self.search_calls = []
         self.count_calls = []
+
+    @staticmethod
+    def _parse_filters(query):
+        allowed = None
+        prefix = None
+        for clause in (query or {}).get("bool", {}).get("filter", []):
+            if "terms" in clause and "permissions" in clause["terms"]:
+                allowed = set(clause["terms"]["permissions"])
+            if "prefix" in clause and "doc_id" in clause["prefix"]:
+                prefix = clause["prefix"]["doc_id"]
+        return allowed, prefix
 
     def search(self, **kwargs):
         self.search_calls.append(kwargs)
         if self._search_error is not None:
             raise self._search_error
-        if "aggs" in kwargs and self._agg_buckets is not None:
-            return {"aggregations": {"docs": {"buckets": self._agg_buckets}}}
+        if "aggs" in kwargs:
+            if self._docs is not None:
+                allowed, prefix = self._parse_filters(kwargs.get("query"))
+                buckets = []
+                for d in self._docs:
+                    perms = set(d.get("permissions", ["public"]))
+                    if prefix and not d["doc_id"].startswith(prefix):
+                        continue
+                    if allowed is not None and not (perms & allowed):
+                        continue
+                    src = {k: d.get(k, "") for k in ("doc_id", "title", "source_url")}
+                    hits = {"hits": {"hits": [{"_source": src}]}}
+                    buckets.append({"key": d["doc_id"], "top": hits})
+                return {"aggregations": {"docs": {"buckets": buckets}}}
+            if self._agg_buckets is not None:
+                return {"aggregations": {"docs": {"buckets": self._agg_buckets}}}
         return {"hits": {"hits": self._hits}}
 
     def count(self, **kwargs):
@@ -207,7 +233,97 @@ def test_list_documents_success_shape():
     assert result["documents"][0] == {"doc_id": "doc-1", "title": "T1", "source_url": "u1"}
 
 
+# --- rerank / prefix input validation -------------------------------------
+
+
+def test_retrieve_non_boolean_rerank_is_validation_error():
+    result = retrieve_chunks_impl(
+        "q", mode="bm25", rerank="yes", client=FakeES(), index="rag_chunks"
+    )
+    assert result["errorCategory"] == "validation"
+
+
+def test_answer_non_boolean_rerank_is_validation_error():
+    result = answer_with_citations_impl(
+        "q",
+        rerank=1,
+        client=FakeES(),
+        embedder=FakeEmbedder(),
+        provider=ScriptedProvider("{}"),
+        index="rag_chunks",
+    )
+    assert result["errorCategory"] == "validation"
+
+
+def test_list_documents_non_string_prefix_is_validation_error():
+    result = list_documents_impl(prefix=123, client=FakeES(agg_buckets=[]), index="rag_chunks")
+    assert result["errorCategory"] == "validation"
+
+
+def test_list_documents_whitespace_prefix_treated_as_none():
+    es = FakeES(agg_buckets=[])
+    result = list_documents_impl(prefix="   ", client=es, index="rag_chunks")
+    assert result.get("isError", False) is False
+    # Whitespace-only prefix is dropped -> the query carries no prefix clause.
+    filters = es.search_calls[-1]["query"]["bool"]["filter"]
+    assert not any("prefix" in clause for clause in filters)
+
+
+def test_list_documents_hides_docs_not_visible_to_caller_roles():
+    docs = [
+        {"doc_id": "pub", "title": "Public", "source_url": "u1", "permissions": ["public"]},
+        {"doc_id": "sec", "title": "Secret", "source_url": "u2", "permissions": ["admin"]},
+    ]
+    es = FakeES(docs=docs)
+
+    public = list_documents_impl(caller_roles=["public"], client=es, index="rag_chunks")
+    assert {d["doc_id"] for d in public["documents"]} == {"pub"}
+
+    # "admin" effective roles include "public", so the admin sees both.
+    admin = list_documents_impl(caller_roles=["admin"], client=es, index="rag_chunks")
+    assert {d["doc_id"] for d in admin["documents"]} == {"pub", "sec"}
+
+
 @pytest.mark.parametrize("payload", ["isError", "errorCategory", "isRetryable", "message"])
 def test_error_payload_has_required_keys(payload):
     result = retrieve_chunks_impl("q", mode="bad", client=FakeES(), index="rag_chunks")
     assert payload in result
+
+
+# --- @mcp.tool() wrapper guard --------------------------------------------
+# Resource acquisition (get_es_client/get_embedder/get_provider) and span setup
+# happen in the registered wrapper, outside the guarded _impl. The wrapper is
+# guarded too, so a failure there must still return a structured error, not raise
+# a stack trace into the MCP response.
+
+
+def _boom(*args, **kwargs):
+    raise RuntimeError("bad ES URL / resource construction failed")
+
+
+def test_retrieve_chunks_wrapper_guards_resource_errors(monkeypatch):
+    import app.mcp.server as server
+
+    monkeypatch.setattr(server, "get_es_client", _boom)
+    result = server.retrieve_chunks("q", mode="bm25")
+    assert result["isError"] is True
+    assert "Traceback" not in result["message"]
+    assert "bad ES URL" not in result["message"]
+
+
+def test_answer_with_citations_wrapper_guards_resource_errors(monkeypatch):
+    import app.mcp.server as server
+
+    monkeypatch.setattr(server, "get_es_client", _boom)
+    result = server.answer_with_citations("q")
+    assert result["isError"] is True
+    assert "Traceback" not in result["message"]
+
+
+def test_list_documents_wrapper_guards_resource_errors(monkeypatch):
+    import app.mcp.server as server
+
+    monkeypatch.setattr(server, "get_es_client", _boom)
+    result = server.list_documents()
+    assert result["isError"] is True
+    assert "Traceback" not in result["message"]

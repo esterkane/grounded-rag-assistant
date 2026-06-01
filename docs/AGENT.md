@@ -74,11 +74,18 @@ in `app/mcp/server.py` for the full, MCP-client-facing descriptions.
 
 Tools never raise or leak a stack trace. On failure they return
 `{isError: true, errorCategory, isRetryable, message, details}` where
-`errorCategory` is one of `validation` (bad input — not retryable), `transient`
-(backend unreachable — retryable), `business` (e.g. matches exist but none are
-visible to `caller_roles` — not retryable), or `permission`. Insufficient
-evidence from `answer_with_citations` is a normal result (`answered=false`), not
-an error.
+`errorCategory` is one of `validation` (bad input — not retryable), `transient`,
+`business` (e.g. matches exist but none are visible to `caller_roles` — not
+retryable), or `permission`.
+
+Note that `transient` covers two cases with **different** retryability: a
+backend that is momentarily unreachable (`isRetryable: true`) and an unexpected
+internal exception that was caught to avoid leaking a trace (`isRetryable:
+false`). Clients should therefore branch on the `isRetryable` flag directly,
+never infer retryability from `errorCategory` alone.
+
+Insufficient evidence from `answer_with_citations` is a normal result
+(`answered=false`), not an error.
 
 ### Observability
 

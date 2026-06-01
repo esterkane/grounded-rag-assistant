@@ -25,6 +25,7 @@ from app.retrieval.reranker import CrossEncoderReranker
 from app.retrieval.retriever import (
     PUBLIC_ROLE,
     bm25_search,
+    build_permissions_filter,
     hybrid_search,
     vector_search,
 )
@@ -45,6 +46,11 @@ def _validate_k(k: int) -> None:
         raise ToolValidationError(
             f"`k` must be an integer between 1 and {MAX_K}.", details={"k": k}
         )
+
+
+def _validate_rerank(rerank: bool) -> None:
+    if not isinstance(rerank, bool):
+        raise ToolValidationError("`rerank` must be a boolean.", details={"rerank": rerank})
 
 
 def _roles(caller_roles: list[str] | None) -> list[str]:
@@ -87,6 +93,7 @@ def retrieve_chunks_impl(
             f"`mode` must be one of {VALID_MODES}.", details={"mode": mode}
         )
     _validate_k(k)
+    _validate_rerank(rerank)
     roles = _roles(caller_roles)
 
     if mode in ("vector", "hybrid") and embedder is None:
@@ -155,6 +162,7 @@ def answer_with_citations_impl(
     """
     query = _validate_query(query)
     _validate_k(k)
+    _validate_rerank(rerank)
     roles = _roles(caller_roles)
     settings = get_settings()
 
@@ -180,20 +188,39 @@ def list_documents_impl(
     prefix: str | None = None,
     *,
     limit: int = 50,
+    caller_roles: list[str] | None = None,
     client: Elasticsearch,
     index: str,
 ) -> dict[str, Any]:
-    """List distinct documents (doc_id / title / source_url) in the corpus."""
+    """List distinct documents (doc_id / title / source_url) in the corpus.
+
+    Only documents with at least one chunk visible to ``caller_roles`` are
+    returned, mirroring the permission filtering of the retrieval tools — the
+    catalog must not leak the existence of restricted documents.
+    """
     if not isinstance(limit, int) or isinstance(limit, bool) or not (1 <= limit <= MAX_LIMIT):
         raise ToolValidationError(
             f"`limit` must be an integer between 1 and {MAX_LIMIT}.", details={"limit": limit}
         )
+    if prefix is not None:
+        if not isinstance(prefix, str):
+            raise ToolValidationError(
+                "`prefix` must be a string when provided.", details={"prefix": prefix}
+            )
+        # Treat a whitespace-only prefix as "no prefix".
+        prefix = prefix.strip() or None
 
-    query = {"prefix": {"doc_id": prefix}} if prefix else {"match_all": {}}
+    roles = _roles(caller_roles)
+    # Restrict the aggregation to chunks visible to the caller's roles, so only
+    # documents with at least one visible chunk surface in the catalog.
+    filters: list[dict[str, Any]] = [build_permissions_filter(roles)]
+    if prefix:
+        filters.append({"prefix": {"doc_id": prefix}})
+
     resp = client.search(
         index=index,
         size=0,
-        query=query,
+        query={"bool": {"filter": filters}},
         aggs={
             "docs": {
                 "terms": {"field": "doc_id", "size": limit, "order": {"_key": "asc"}},
