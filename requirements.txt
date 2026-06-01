@@ -19,7 +19,7 @@ opentelemetry-exporter-otlp-proto-http
 # promise across minors; revisit pins when bumping them.
 mcp>=1.0,<2.0
 langgraph>=0.2,<1.0
-langchain-mcp-adapters>=0.1,<1.0
+langchain-mcp-adapters>=0.1,<0.2
 langchain-core>=0.3,<1.0
 pytest
 ruff

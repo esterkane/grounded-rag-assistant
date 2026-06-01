@@ -43,6 +43,17 @@ demo:
 mcp-server:
 	docker compose run --rm --no-deps -i api python -m app.mcp.server
 
-# Placeholder until Phase 2 wires `python -m app.agent.run`.
+# Run the LangGraph agent against a question, streaming node events.
+# Usage: make agent "how does hybrid search work?"   (or: make agent Q="...")
 agent:
-	@echo "agent: not implemented yet"
+	docker compose run --rm -i api python -m app.agent.run "$(if $(Q),$(Q),$(AGENT_ARGS))"
+
+# Let `make agent "free text"` pass the trailing words as the question: capture
+# the goals after `agent` and define them as no-op targets so make doesn't try
+# to build them.
+ifeq (agent,$(firstword $(MAKECMDGOALS)))
+AGENT_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+ifneq ($(AGENT_ARGS),)
+$(eval $(AGENT_ARGS):;@:)
+endif
+endif
