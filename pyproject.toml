@@ -19,6 +19,14 @@ dependencies = [
     "opentelemetry-api",
     "opentelemetry-sdk",
     "opentelemetry-exporter-otlp-proto-http",
+    # Project 2 — LangGraph + MCP agent layer. Ranges are capped below the next
+    # major. Note langgraph and the langchain-* packages are still 0.x, where
+    # minor bumps routinely ship breaking changes — so the <1.0 caps are not a
+    # promise of compatibility across minors; revisit pins when bumping them.
+    "mcp>=1.0,<2.0",
+    "langgraph>=0.2,<1.0",
+    "langchain-mcp-adapters>=0.1,<1.0",
+    "langchain-core>=0.3,<1.0",
 ]
 
 [project.optional-dependencies]

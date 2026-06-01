@@ -16,4 +16,4 @@ build/
 *.bak
 data/sample_corpus/
 eval_reports/
-mcp/project-context/node_modules/
+mcp-servers/project-context/node_modules/

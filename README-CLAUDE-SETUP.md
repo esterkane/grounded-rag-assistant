@@ -29,7 +29,7 @@ CLAUDE.md                         Always-loaded project facts, stack, commands, 
   agents/
     code-reviewer.md              Independent read-only reviewer subagent
     test-writer.md                Regression-test writer subagent
-mcp/project-context/              A small dev-time MCP server (TypeScript)
+mcp-servers/project-context/      A small dev-time MCP server (TypeScript)
 docs/
   BUILD_PHASES.md                 Placeholder — replace with the codex prompts file
   INFRA.md                        Canonical docker-compose / Elasticsearch spec
@@ -40,7 +40,7 @@ docs/
 
 1. **Copy the contents into your repo root.** Everything here is meant to live at
    the top level of the `grounded-rag-assistant` repository — `CLAUDE.md` and
-   `.mcp.json` at the root, the `.claude/` directory, and the `mcp/` directory.
+   `.mcp.json` at the root, the `.claude/` directory, and the `mcp-servers/` directory.
    `.claude/` is a hidden folder; make sure your copy includes it.
 
 2. **Provide the build phases.** Copy your `project1-codex-prompts.md` into
@@ -51,13 +51,13 @@ docs/
    once (and again after edits):
 
    ```bash
-   cd mcp/project-context
+   cd mcp-servers/project-context
    npm install
    npm run build
    cd ../..
    ```
 
-   This produces `mcp/project-context/build/index.js`, which `.mcp.json` points
+   This produces `mcp-servers/project-context/build/index.js`, which `.mcp.json` points
    at. `node_modules/` and `build/` are gitignored; commit the `src/`,
    `package.json`, and `tsconfig.json` so teammates can rebuild.
 
@@ -92,7 +92,7 @@ docs/
   `docker compose down -v`). A skill's `allowed-tools` only pre-approves tools for
   smoother prompts; it is **not** a hard restriction — the permissions here are.
 
-- **`mcp/project-context/`** is a dev-time MCP server with four tools:
+- **`mcp-servers/project-context/`** is a dev-time MCP server with four tools:
   `project_snapshot` (compact file tree), `read_project_doc` (bounded doc reads,
   including `BUILD_PHASES.md`), `summarize_ci_failure` (trims long test/CI logs to
   the actionable lines), and `eval_report_summary` (parses the latest
