@@ -26,6 +26,13 @@ class Settings(BaseSettings):
     elasticsearch_url: str = "http://localhost:9200"
     elasticsearch_index: str = "rag_chunks"
 
+    # MCP server (Project 2). Transport is "stdio" (default, for local dev and
+    # Claude Code) or "http" (streamable-HTTP, for the LangGraph client in
+    # Phase 2). The HTTP host/port are only used when mcp_transport == "http".
+    mcp_transport: str = "stdio"
+    mcp_http_host: str = "0.0.0.0"
+    mcp_http_port: int = 8765
+
     postgres_host: str = "localhost"
     postgres_port: int = 5432
     postgres_db: str = "grounded_rag"
