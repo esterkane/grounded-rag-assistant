@@ -47,6 +47,11 @@ def _validate_k(k: int) -> None:
         )
 
 
+def _validate_rerank(rerank: bool) -> None:
+    if not isinstance(rerank, bool):
+        raise ToolValidationError("`rerank` must be a boolean.", details={"rerank": rerank})
+
+
 def _roles(caller_roles: list[str] | None) -> list[str]:
     if caller_roles is None:
         return [PUBLIC_ROLE]
@@ -87,6 +92,7 @@ def retrieve_chunks_impl(
             f"`mode` must be one of {VALID_MODES}.", details={"mode": mode}
         )
     _validate_k(k)
+    _validate_rerank(rerank)
     roles = _roles(caller_roles)
 
     if mode in ("vector", "hybrid") and embedder is None:
@@ -155,6 +161,7 @@ def answer_with_citations_impl(
     """
     query = _validate_query(query)
     _validate_k(k)
+    _validate_rerank(rerank)
     roles = _roles(caller_roles)
     settings = get_settings()
 
@@ -188,6 +195,13 @@ def list_documents_impl(
         raise ToolValidationError(
             f"`limit` must be an integer between 1 and {MAX_LIMIT}.", details={"limit": limit}
         )
+    if prefix is not None:
+        if not isinstance(prefix, str):
+            raise ToolValidationError(
+                "`prefix` must be a string when provided.", details={"prefix": prefix}
+            )
+        # Treat a whitespace-only prefix as "no prefix".
+        prefix = prefix.strip() or None
 
     query = {"prefix": {"doc_id": prefix}} if prefix else {"match_all": {}}
     resp = client.search(

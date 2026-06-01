@@ -207,6 +207,41 @@ def test_list_documents_success_shape():
     assert result["documents"][0] == {"doc_id": "doc-1", "title": "T1", "source_url": "u1"}
 
 
+# --- rerank / prefix input validation -------------------------------------
+
+
+def test_retrieve_non_boolean_rerank_is_validation_error():
+    result = retrieve_chunks_impl(
+        "q", mode="bm25", rerank="yes", client=FakeES(), index="rag_chunks"
+    )
+    assert result["errorCategory"] == "validation"
+
+
+def test_answer_non_boolean_rerank_is_validation_error():
+    result = answer_with_citations_impl(
+        "q",
+        rerank=1,
+        client=FakeES(),
+        embedder=FakeEmbedder(),
+        provider=ScriptedProvider("{}"),
+        index="rag_chunks",
+    )
+    assert result["errorCategory"] == "validation"
+
+
+def test_list_documents_non_string_prefix_is_validation_error():
+    result = list_documents_impl(prefix=123, client=FakeES(agg_buckets=[]), index="rag_chunks")
+    assert result["errorCategory"] == "validation"
+
+
+def test_list_documents_whitespace_prefix_treated_as_none():
+    es = FakeES(agg_buckets=[])
+    result = list_documents_impl(prefix="   ", client=es, index="rag_chunks")
+    assert result.get("isError", False) is False
+    # Whitespace-only prefix is dropped -> match_all query, not a prefix query.
+    assert es.search_calls[-1]["query"] == {"match_all": {}}
+
+
 @pytest.mark.parametrize("payload", ["isError", "errorCategory", "isRetryable", "message"])
 def test_error_payload_has_required_keys(payload):
     result = retrieve_chunks_impl("q", mode="bad", client=FakeES(), index="rag_chunks")
