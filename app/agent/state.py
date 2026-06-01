@@ -1,8 +1,7 @@
 """Agent state for the LangGraph workflow (Project 2).
 
-Phase 0: the initial ``AgentState`` shape. The nodes that read and write these
-fields arrive in Phase 2; this module only defines the contract so the graph
-builder and tests have a stable type to import.
+Phase 2: the state threaded through the plan → retrieve → reflect → answer
+graph. ``total=False`` so nodes populate fields incrementally across hops.
 """
 
 from __future__ import annotations
@@ -11,31 +10,32 @@ from typing import Any, TypedDict
 
 
 class AgentState(TypedDict, total=False):
-    """State threaded through the plan → retrieve → reflect → answer graph.
-
-    ``total=False`` so nodes may populate fields incrementally across hops.
+    """State for the plan → retrieve → reflect → answer graph.
 
     Fields:
         query: The original user question.
         sub_queries: Decomposed sub-queries produced by the plan node.
+        pending_queries: Sub-queries not yet retrieved; the retrieve node
+            consumes these and clears the list. Plan seeds it from sub_queries;
+            reflect appends a single follow-up when it routes back to retrieve.
         retrieved: Chunks accumulated across retrieval hops, deduplicated on
             ``chunk_id``.
-        draft_answer: Intermediate structured answer, if any.
-        final_answer: The structured grounded-answer object returned to the
-            caller (answer text, claims with cited chunk_ids, sources,
-            answered/insufficient flag).
-        hop: Current retrieval hop (0-based).
-        max_hops: Hard upper bound on retrieval hops (default 2). The reflect
-            node may not loop past this.
-        trace_id: Trace identifier propagated to MCP tool calls and used as the
-            checkpointer thread key.
+        draft_answer: Reserved for an intermediate answer (unused in Phase 2).
+        final_answer: The structured GroundedAnswer dict returned to the caller.
+        hop: Current retrieval hop (0-based); bounded by ``max_hops``.
+        max_hops: Hard upper bound on retrieval hops (default 2).
+        next_action: Routing decision set by the reflect node — one of
+            "retrieve", "answer", "insufficient".
+        trace_id: Trace identifier; also the checkpointer thread key.
     """
 
     query: str
     sub_queries: list[str]
+    pending_queries: list[str]
     retrieved: list[dict[str, Any]]
     draft_answer: dict[str, Any] | None
     final_answer: dict[str, Any] | None
     hop: int
     max_hops: int
+    next_action: str
     trace_id: str

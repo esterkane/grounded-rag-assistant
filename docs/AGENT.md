@@ -1,9 +1,9 @@
 # Agent layer — `grounded-rag-assistant` (Project 2)
 
-> **Status: Phase 1.** The MCP server now exposes three tools wrapping the
-> Project 1 retriever and answerer. The LangGraph graph nodes and the HTTP
-> endpoint are still to come (Phases 2–4). See `docs/PROJECT_2.md` for the phase
-> definitions.
+> **Status: Phase 2.** The MCP server exposes three tools (Phase 1) and a
+> LangGraph agent now orchestrates them (plan → retrieve → reflect → answer).
+> Persistent checkpointing/observability and the HTTP endpoint are still to come
+> (Phases 3–4). See `docs/PROJECT_2.md` for the phase definitions.
 
 Project 2 adds an **agentic layer** on top of the Project 1 RAG service. The
 Phase 2 retriever and Phase 3 answerer functions are exposed as **MCP tools**,
@@ -98,7 +98,35 @@ their child spans automatically.
 | Command | What it does |
 | --- | --- |
 | `make mcp-server` | Start the FastMCP server on stdio with the three tools registered. |
-| `make agent` | Phase 0 placeholder (`agent: not implemented yet`). Becomes `python -m app.agent.run "<question>"` in Phase 2. |
+| `make agent "<question>"` | Run the LangGraph agent against a question, streaming node-level events then the grounded answer. (Also `make agent Q="..."`.) Wraps `python -m app.agent.run`. |
+
+## Agent graph (Phase 2)
+
+The agent (`app/agent/`) connects to the `grounded-rag` MCP server via
+`langchain-mcp-adapters` (stdio by default; streamable-HTTP when
+`MCP_TRANSPORT=http`) and orchestrates the tools through a LangGraph workflow:
+
+```
+START → plan → retrieve → reflect ─┬─(retrieve, hop+1)→ retrieve
+                                   ├─(answer)──────────→ answer → END
+                                   └─(insufficient)────→ insufficient → END
+```
+
+- **plan** — uses the LLM provider to split the question into 1–3 sub-queries.
+- **retrieve** — calls `retrieve_chunks` per pending sub-query; accumulates
+  chunks deduplicated on `chunk_id`.
+- **reflect** — judges sufficiency; routes to `answer`, back to `retrieve` with a
+  follow-up sub-query (bounded by `max_hops`, default 2), or to `insufficient`
+  when evidence is lacking and hops are exhausted.
+- **answer** — calls `answer_with_citations`; on a tool error it falls back to
+  the insufficient response (never a hallucinated answer).
+- **insufficient** — returns the structured insufficient-evidence response.
+
+The plan/reflect LLM calls reuse `build_provider` (so the Gemini→Ollama fallback
+applies). Checkpointing uses LangGraph's `MemorySaver`, with threads keyed by
+`trace_id` (persistent Postgres checkpointing arrives in Phase 3). The graph and
+nodes are importable and unit-testable without HTTP; only the Phase 4
+`/agent_ask` endpoint will adapt it to FastAPI.
 
 ## Configuration
 
