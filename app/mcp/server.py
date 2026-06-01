@@ -28,6 +28,7 @@ from mcp.server.fastmcp import FastMCP
 from opentelemetry import trace
 
 from app.config import get_settings
+from app.mcp.errors import guard
 from app.mcp.resources import get_embedder, get_es_client, get_provider, get_reranker
 from app.mcp.tools import (
     answer_with_citations_impl,
@@ -46,6 +47,7 @@ mcp = FastMCP(
 
 
 @mcp.tool()
+@guard("retrieve_chunks")
 def retrieve_chunks(
     query: str,
     k: int = 8,
@@ -116,6 +118,7 @@ def retrieve_chunks(
 
 
 @mcp.tool()
+@guard("answer_with_citations")
 def answer_with_citations(
     query: str,
     k: int = 8,
@@ -179,6 +182,7 @@ def answer_with_citations(
 
 
 @mcp.tool()
+@guard("list_documents")
 def list_documents(prefix: str | None = None, limit: int = 50) -> dict[str, Any]:
     """List the distinct documents available in the indexed corpus.
 

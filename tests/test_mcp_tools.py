@@ -211,3 +211,42 @@ def test_list_documents_success_shape():
 def test_error_payload_has_required_keys(payload):
     result = retrieve_chunks_impl("q", mode="bad", client=FakeES(), index="rag_chunks")
     assert payload in result
+
+
+# --- @mcp.tool() wrapper guard --------------------------------------------
+# Resource acquisition (get_es_client/get_embedder/get_provider) and span setup
+# happen in the registered wrapper, outside the guarded _impl. The wrapper is
+# guarded too, so a failure there must still return a structured error, not raise
+# a stack trace into the MCP response.
+
+
+def _boom(*args, **kwargs):
+    raise RuntimeError("bad ES URL / resource construction failed")
+
+
+def test_retrieve_chunks_wrapper_guards_resource_errors(monkeypatch):
+    import app.mcp.server as server
+
+    monkeypatch.setattr(server, "get_es_client", _boom)
+    result = server.retrieve_chunks("q", mode="bm25")
+    assert result["isError"] is True
+    assert "Traceback" not in result["message"]
+    assert "bad ES URL" not in result["message"]
+
+
+def test_answer_with_citations_wrapper_guards_resource_errors(monkeypatch):
+    import app.mcp.server as server
+
+    monkeypatch.setattr(server, "get_es_client", _boom)
+    result = server.answer_with_citations("q")
+    assert result["isError"] is True
+    assert "Traceback" not in result["message"]
+
+
+def test_list_documents_wrapper_guards_resource_errors(monkeypatch):
+    import app.mcp.server as server
+
+    monkeypatch.setattr(server, "get_es_client", _boom)
+    result = server.list_documents()
+    assert result["isError"] is True
+    assert "Traceback" not in result["message"]
