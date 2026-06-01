@@ -3,7 +3,7 @@
     "project-context": {
       "type": "stdio",
       "command": "node",
-      "args": ["./mcp/project-context/build/index.js"],
+      "args": ["./mcp-servers/project-context/build/index.js"],
       "env": {
         "PROJECT_ROOT": "${PWD:-.}"
       },
