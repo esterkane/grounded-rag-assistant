@@ -183,7 +183,11 @@ def answer_with_citations(
 
 @mcp.tool()
 @guard("list_documents")
-def list_documents(prefix: str | None = None, limit: int = 50) -> dict[str, Any]:
+def list_documents(
+    prefix: str | None = None,
+    limit: int = 50,
+    caller_roles: list[str] | None = None,
+) -> dict[str, Any]:
     """List the distinct documents available in the indexed corpus.
 
     WHAT IT DOES: Returns a catalog of distinct documents — (doc_id, title,
@@ -199,15 +203,20 @@ def list_documents(prefix: str | None = None, limit: int = 50) -> dict[str, Any]
 
     INPUTS:
       - prefix (str, optional): if given, only documents whose doc_id starts with
-        this prefix are returned.
+        this prefix are returned. A whitespace-only prefix is ignored.
       - limit (int, default 50, 1..1000): maximum number of documents to return.
+      - caller_roles (list[str], default ["public"]): the caller's roles. Only
+        documents with at least one chunk whose `permissions` intersect these
+        roles are listed — the catalog never reveals restricted documents the
+        caller cannot see.
 
     OUTPUT: {count, documents: [{doc_id, title, source_url}]}. `documents` may be
-    empty if the corpus is empty or nothing matches the prefix.
+    empty if the corpus is empty, nothing matches the prefix, or nothing is
+    visible to caller_roles.
 
     EDGE CASES & FAILURES: On failure a structured error is returned:
-    "validation" (limit out of range, not retryable) or "transient" (backend
-    unreachable, retryable). Stack traces are never returned.
+    "validation" (limit out of range or non-string prefix, not retryable) or
+    "transient" (backend unreachable, retryable). Stack traces are never returned.
     """
     with tracer.start_as_current_span("mcp.list_documents") as span:
         span.set_attribute("mcp.tool", "list_documents")
@@ -216,6 +225,7 @@ def list_documents(prefix: str | None = None, limit: int = 50) -> dict[str, Any]
         result = list_documents_impl(
             prefix,
             limit=limit,
+            caller_roles=caller_roles,
             client=get_es_client(),
             index=settings.elasticsearch_index,
         )

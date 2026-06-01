@@ -24,20 +24,46 @@ from app.mcp.tools import (
 class FakeES:
     """Minimal Elasticsearch stand-in for the handlers' .search / .count calls."""
 
-    def __init__(self, *, hits=None, count=0, agg_buckets=None, search_error=None):
+    def __init__(self, *, hits=None, count=0, agg_buckets=None, docs=None, search_error=None):
         self._hits = hits or []
         self._count = count
         self._agg_buckets = agg_buckets
+        self._docs = docs  # for list_documents: honor permission/prefix filters
         self._search_error = search_error
         self.search_calls = []
         self.count_calls = []
+
+    @staticmethod
+    def _parse_filters(query):
+        allowed = None
+        prefix = None
+        for clause in (query or {}).get("bool", {}).get("filter", []):
+            if "terms" in clause and "permissions" in clause["terms"]:
+                allowed = set(clause["terms"]["permissions"])
+            if "prefix" in clause and "doc_id" in clause["prefix"]:
+                prefix = clause["prefix"]["doc_id"]
+        return allowed, prefix
 
     def search(self, **kwargs):
         self.search_calls.append(kwargs)
         if self._search_error is not None:
             raise self._search_error
-        if "aggs" in kwargs and self._agg_buckets is not None:
-            return {"aggregations": {"docs": {"buckets": self._agg_buckets}}}
+        if "aggs" in kwargs:
+            if self._docs is not None:
+                allowed, prefix = self._parse_filters(kwargs.get("query"))
+                buckets = []
+                for d in self._docs:
+                    perms = set(d.get("permissions", ["public"]))
+                    if prefix and not d["doc_id"].startswith(prefix):
+                        continue
+                    if allowed is not None and not (perms & allowed):
+                        continue
+                    src = {k: d.get(k, "") for k in ("doc_id", "title", "source_url")}
+                    hits = {"hits": {"hits": [{"_source": src}]}}
+                    buckets.append({"key": d["doc_id"], "top": hits})
+                return {"aggregations": {"docs": {"buckets": buckets}}}
+            if self._agg_buckets is not None:
+                return {"aggregations": {"docs": {"buckets": self._agg_buckets}}}
         return {"hits": {"hits": self._hits}}
 
     def count(self, **kwargs):
@@ -238,8 +264,24 @@ def test_list_documents_whitespace_prefix_treated_as_none():
     es = FakeES(agg_buckets=[])
     result = list_documents_impl(prefix="   ", client=es, index="rag_chunks")
     assert result.get("isError", False) is False
-    # Whitespace-only prefix is dropped -> match_all query, not a prefix query.
-    assert es.search_calls[-1]["query"] == {"match_all": {}}
+    # Whitespace-only prefix is dropped -> the query carries no prefix clause.
+    filters = es.search_calls[-1]["query"]["bool"]["filter"]
+    assert not any("prefix" in clause for clause in filters)
+
+
+def test_list_documents_hides_docs_not_visible_to_caller_roles():
+    docs = [
+        {"doc_id": "pub", "title": "Public", "source_url": "u1", "permissions": ["public"]},
+        {"doc_id": "sec", "title": "Secret", "source_url": "u2", "permissions": ["admin"]},
+    ]
+    es = FakeES(docs=docs)
+
+    public = list_documents_impl(caller_roles=["public"], client=es, index="rag_chunks")
+    assert {d["doc_id"] for d in public["documents"]} == {"pub"}
+
+    # "admin" effective roles include "public", so the admin sees both.
+    admin = list_documents_impl(caller_roles=["admin"], client=es, index="rag_chunks")
+    assert {d["doc_id"] for d in admin["documents"]} == {"pub", "sec"}
 
 
 @pytest.mark.parametrize("payload", ["isError", "errorCategory", "isRetryable", "message"])

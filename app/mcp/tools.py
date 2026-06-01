@@ -25,6 +25,7 @@ from app.retrieval.reranker import CrossEncoderReranker
 from app.retrieval.retriever import (
     PUBLIC_ROLE,
     bm25_search,
+    build_permissions_filter,
     hybrid_search,
     vector_search,
 )
@@ -187,10 +188,16 @@ def list_documents_impl(
     prefix: str | None = None,
     *,
     limit: int = 50,
+    caller_roles: list[str] | None = None,
     client: Elasticsearch,
     index: str,
 ) -> dict[str, Any]:
-    """List distinct documents (doc_id / title / source_url) in the corpus."""
+    """List distinct documents (doc_id / title / source_url) in the corpus.
+
+    Only documents with at least one chunk visible to ``caller_roles`` are
+    returned, mirroring the permission filtering of the retrieval tools — the
+    catalog must not leak the existence of restricted documents.
+    """
     if not isinstance(limit, int) or isinstance(limit, bool) or not (1 <= limit <= MAX_LIMIT):
         raise ToolValidationError(
             f"`limit` must be an integer between 1 and {MAX_LIMIT}.", details={"limit": limit}
@@ -203,11 +210,17 @@ def list_documents_impl(
         # Treat a whitespace-only prefix as "no prefix".
         prefix = prefix.strip() or None
 
-    query = {"prefix": {"doc_id": prefix}} if prefix else {"match_all": {}}
+    roles = _roles(caller_roles)
+    # Restrict the aggregation to chunks visible to the caller's roles, so only
+    # documents with at least one visible chunk surface in the catalog.
+    filters: list[dict[str, Any]] = [build_permissions_filter(roles)]
+    if prefix:
+        filters.append({"prefix": {"doc_id": prefix}})
+
     resp = client.search(
         index=index,
         size=0,
-        query=query,
+        query={"bool": {"filter": filters}},
         aggs={
             "docs": {
                 "terms": {"field": "doc_id", "size": limit, "order": {"_key": "asc"}},
