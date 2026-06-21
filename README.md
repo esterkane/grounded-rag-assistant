@@ -25,8 +25,24 @@ support an answer.
 
 API delivery is kept separate from retrieval and generation logic: code in
 `app/retrieval/` and `app/generation/answerer.py` has **no FastAPI coupling**, so
-the same functions can later be exposed through LangGraph and MCP without rework.
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+the same functions are also exposed through MCP (and, in progress, LangGraph)
+without rework. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Agent Access (MCP)
+
+A FastMCP server (`app/mcp/`) exposes the retrieval and generation core as three
+**read-only** MCP tools that any MCP client (a LangGraph agent, Claude Code,
+Cursor) can call:
+
+- `retrieve_chunks` — hybrid / BM25 / vector retrieval over the corpus.
+- `answer_with_citations` — the full grounded-answer pipeline.
+- `list_documents` — a catalog of indexed documents for planning.
+
+The tools reuse the same FastAPI-free functions the HTTP API uses, return
+structured errors, and never leak stack traces. Start the server with
+`make mcp-server` (stdio) and register it via a `.mcp.json` snippet. See
+[docs/mcp.md](docs/mcp.md) for the tool signatures, the error contract, transport
+options, and client registration.
 
 ## Stack
 
@@ -103,6 +119,7 @@ Elasticsearch + Postgres service containers on every push/PR.
   [Deployment](docs/DEPLOYMENT.md)
 - [Build phases](docs/BUILD_PHASES.md) · [Corpus](docs/CORPUS.md) ·
   [Infra](docs/INFRA.md)
+- [Agent access (MCP)](docs/mcp.md) · [Agent layer](docs/AGENT.md)
 
 The corpus itself is not committed: `make corpus` fetches it reproducibly from
 public Elastic GitHub repos into the gitignored `data/sample_corpus/` (see
@@ -113,8 +130,12 @@ public Elastic GitHub repos into the gitignored `data/sample_corpus/` (see
 - True per-file `last_updated` dates. `make corpus` uses a `--depth 1` clone, so
   every fetched file is stamped with the corpus fetch date (UTC). A partial clone
   (`--filter=blob:none`) would give real per-file commit dates — future work.
-- The LangGraph + MCP layer ("Project 2") that wraps the retrieval and generation
-  functions as tools is future work — the core is kept FastAPI-free to enable it.
+- The **MCP tools layer** ("Project 2") that wraps the retrieval and generation
+  functions as agent-callable tools is **implemented** (`app/mcp/`,
+  three tools — see [docs/mcp.md](docs/mcp.md)). The **LangGraph** agent that
+  orchestrates those tools is **partially built** (plan → retrieve → reflect →
+  answer; persistent checkpointing, the `/agent_ask` HTTP endpoint, and the agent
+  demo are still in progress — see [docs/AGENT.md](docs/AGENT.md)).
 
 ## Caveats
 
