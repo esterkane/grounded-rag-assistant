@@ -27,6 +27,7 @@ Important entry points:
 - HTTP routes (`/search`, `/ask`, admin/review): `app/api/`
 - Retrieval core (BM25, vector, hybrid RRF, rerank): `app/retrieval/`
 - Generation core (provider abstraction, grounded answerer): `app/generation/`
+- MCP agent-access tools (FastMCP server reusing the core): `app/mcp/` (see `docs/mcp.md`)
 - Ingestion (loaders, chunking, embedder, indexer): `app/ingestion/`
 - Evaluation harness: `app/eval/`
 - Database + migrations: `app/db/`
@@ -44,7 +45,7 @@ gitignored and reproducible. See `docs/CORPUS.md`.
 
 1. A single FastAPI service (`app/api/`) over Elasticsearch 9.4.1 (BM25 **and** dense-vector kNN, RRF-fused — no separate vector DB) and PostgreSQL 16 (query logs, feedback).
 2. Local `sentence-transformers` embeddings (`BAAI/bge-small-en-v1.5`); generation is provider-abstracted — `gemini` free tier or local `ollama`, with per-request fallback.
-3. Retrieval (`app/retrieval/`) and the grounded answerer (`app/generation/answerer.py`) are FastAPI-free importable functions, so the future LangGraph + MCP agent layer ("Project 2") reuses them unchanged.
+3. Retrieval (`app/retrieval/`) and the grounded answerer (`app/generation/answerer.py`) are FastAPI-free importable functions; the MCP agent-access layer (`app/mcp/`, "Project 2") reuses them unchanged — a thin FastMCP server exposing `retrieve_chunks` / `answer_with_citations` / `list_documents` with structured errors (the LangGraph orchestration over those tools is partially built).
 4. Ingestion (`app/ingestion/`) chunks the fetched Elastic-docs corpus with deterministic hash-based chunk IDs (idempotent re-ingest); the eval harness (`app/eval/`) guards retrieval MRR against regression.
 5. Cross-cutting observability (`app/observability/`): JSON logs with trace ids, OpenTelemetry spans, and per-`/ask` token + cost accounting surfaced at `/metrics`.
 
@@ -54,7 +55,7 @@ gitignored and reproducible. See `docs/CORPUS.md`.
 - **Determinism & reproducibility.** Chunk IDs are deterministic hashes — re-ingest stays idempotent (same corpus → same chunk count, no duplicates). The eval harness stays reproducible; when the agent/planner layer (Project 2) lands, its node sequence must be deterministic for a fixed input.
 - **Quality gates stay green.** `ruff check .`, `pytest`, and `python -m app.eval` (hybrid MRR ≥ `EVAL_HYBRID_MRR_THRESHOLD`, currently `0.38`) must all pass. Lower the threshold only after investigating a *real* regression. No static type-checker is configured — `ruff` + pydantic runtime validation are the gate.
 - **Hybrid retrieval only.** Search fuses BM25 + vector via RRF. No keyword-only or vector-only search endpoint.
-- **The FastAPI-free core boundary.** No `fastapi` imports in `app/retrieval/` or `app/generation/answerer.py` (enforced by `.claude/rules/retrieval-generation.md`).
+- **The FastAPI-free core boundary.** No `fastapi` imports in `app/retrieval/` or `app/generation/answerer.py` (enforced by `.claude/rules/retrieval-generation.md`). The MCP layer (`app/mcp/`) is the agent-access surface: thin wrappers that reuse the FastAPI-free core, return the structured error contract (`{isError, errorCategory, isRetryable, message, details}`), and never leak stack traces (`.claude/rules/agent-mcp.md`).
 - **No secrets in git.** Secrets live only in the gitignored `.env`; `.env.example` documents every variable with an empty value. `GEMINI_API_KEY` is injected at runtime, never committed. Zero paid services (no Pinecone, Elastic Cloud, ELSER, or paid LLM keys).
 - **Infra is pinned.** Elasticsearch `9.4.1`, single node; the Python `elasticsearch` client stays on the 9.x line. Never `docker compose down -v` — it wipes the ES and Postgres volumes.
 
@@ -66,6 +67,7 @@ gitignored and reproducible. See `docs/CORPUS.md`.
 - [ ] Provenance intact: citations validate against retrieved chunks and the insufficient-evidence path still fires.
 - [ ] CI (`.github/workflows/ci.yml`: lint + tests + eval against ES + Postgres) is green.
 - [ ] README / `docs/` updated when commands, services, env vars, or architecture changed.
+- [ ] MCP tools changed (`app/mcp/`) → `docs/mcp.md` and the MCP tests (`tests/test_mcp_tools.py`, `tests/test_mcp_server.py`) are updated to match the tool signatures, error contract, and outputs.
 - [ ] No secrets added to git; `.env.example` updated if a new variable was introduced.
 
 ## Commands
@@ -82,6 +84,7 @@ Use these unless the user gives different instructions:
 - Ingest the sample corpus: `make ingest`  (or `python -m app.ingestion.run --path data/sample_corpus`)
 - Run the evaluation harness: `make eval`
 - End-to-end demo: `make demo`
+- Start the MCP agent-access server (stdio): `make mcp-server`  (or `python -m app.mcp.server`; see `docs/mcp.md`)
 
 ## Working rules
 
