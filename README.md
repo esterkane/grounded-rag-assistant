@@ -6,6 +6,36 @@ Elasticsearch and AI-search technical documentation. It answers questions
 explicit "insufficient evidence" path — it never guesses when the corpus does not
 support an answer.
 
+## Why this project exists
+
+The central engineering question is not simply *can an LLM produce a plausible answer?*
+
+It is:
+
+> **Can the system show enough evidence to justify the answer, and can it recognise when that evidence is insufficient?**
+
+That changes the design from "retrieve some text and prompt a model" into an observable pipeline with explicit failure paths, evaluation, citation validation, and human review.
+
+## What I learned building it
+
+- RAG quality is a **systems problem**, not only a prompt problem: retrieval, ranking, context construction, generation, and validation fail in different ways.
+- A reliable system needs an explicit **insufficient-evidence path** rather than treating fluent output as success.
+- Evaluation should separate **retrieval quality**, **answer grounding**, and **end-to-end behaviour**.
+- Once a pipeline has several stages, **observability** becomes part of correctness because debugging requires knowing which stage failed.
+- AI coding works better when changes are bounded, expected behaviour is explicit, and tests provide a feedback loop.
+
+## Engineering practices demonstrated
+
+- Python + FastAPI service boundaries
+- Elasticsearch hybrid retrieval (BM25 + vector) and reranking
+- PostgreSQL application state
+- Docker Compose local runtime
+- pytest unit and integration tests
+- GitHub Actions CI with lint, tests, and evaluation
+- OpenTelemetry tracing and structured logs
+- health checks, structured errors, and provider fallback
+- MCP tools over the same retrieval/generation core
+
 ## Overview
 
 - **Hybrid retrieval** over Elasticsearch: BM25 + dense-vector kNN fused with
@@ -91,14 +121,6 @@ Example questions (`app/demo.py`):
 1. "How does vector search work in Elasticsearch?"
 2. "What is reciprocal rank fusion and how does hybrid search combine results?"
 3. "How should I chunk documents before indexing them for retrieval?"
-
-## Screenshots
-
-_Placeholder — add screenshots of the review queue and a detail page:_
-
-- `docs/img/review-queue.png` — flagged-query queue
-- `docs/img/review-detail.png` — query, retrieved chunks, answer + citations,
-  feedback form
 
 ## Development
 
